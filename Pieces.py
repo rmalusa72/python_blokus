@@ -101,6 +101,47 @@ class Piece:
         else:
             return False
 
+
+    # checks if a given array matches any permutation of this piece
+    # compare is a 2d array of bools
+    def isThisPiece(self, compare):
+        
+        boolshape = toBoolArray(self.shape)
+        if boolshape == compare:
+            return True
+
+        if self.r90 and self.r180:
+            for i in range(3):
+                self.rotate(1)
+                boolshape = toBoolArray(self.shape)
+                if boolshape == compare:
+                    return True
+        elif self.r90 and not self.r180:
+            self.rotate(1)
+            boolshape = toBoolArray(self.shape)
+            if boolshape == compare:
+                return True
+
+        if self.chiral:
+            if not self.flipV():
+                self.flipH()
+
+            boolshape = toBoolArray(self.shape)
+            if boolshape == compare:
+                return True
+
+            if self.r90 and self.r180:
+                for i in range(3):
+                    self.rotate(1)
+                    boolshape = toBoolArray(self.shape)
+                    if boolshape == compare:
+                        return True
+            elif self.r90 and not self.r180:
+                self.rotate(1)
+                boolshape = toBoolArray(self.shape)
+                if boolshape == compare:
+                    return True
+        
     def __repr__(self):
         return toBoolArray(self.shape).__repr__()
 

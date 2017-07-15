@@ -78,4 +78,4 @@ class Gamestate:
         print self.board
 
 
-        
+

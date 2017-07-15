@@ -1,3 +1,4 @@
+import numpy as np
 from Gamestate import *
 
 # Contains an abstract(ish) player class, and the human and AI variants with their own getMove methods
@@ -20,15 +21,13 @@ class HumanPlayer(Player):
     # When provided an updated gamestate, prompt player for their move
     def getMove(self, update):
         update.printBoard()
-        move = list()
         name = raw_input("Piece name:")
         while not name in self.referenceHand:
             name = raw_input("Invalid name! Piece name:")
-        move.append(name)
-        for i in range(0, self.referenceHand[name].size):
-            x = int(raw_input("x-coord:"))
-            y = int(raw_input("y-coord:"))
-            move.append((x,y))
+        move = (name, np.zeros((2,self.referenceHand[name].size)))
+        for i in move[1][0].size:
+            move[1][0][i] = int(raw_input("x-coord:"))
+            move[1][1][i] = int(raw_input("y-coord:"))
         return move
     
 class AIPlayer(Player):
