@@ -174,8 +174,8 @@ class U(Piece):
     def __init__(self):
         self.shape = np.array([[0,0,1,2,2],
                                [0,1,1,1,0]])
-        self.corners = np.array([[0,-1,0,1,0,-1,2,3,2,1,2,3],
-                                 [0,-1,0,-1,1,2,1,2,0,-1,0,-1]])
+        self.corners = np.array([[0,-1,0,-1,2,3,2,1,2,3],
+                                 [0,-1,1,2,1,2,0,-1,0,-1]])
         self.r90 = True
         self.r180 = True
         self.chiral = False
@@ -238,7 +238,10 @@ class Z(Piece):
 
 class I4(Piece):
     def __init__(self):
-        self.shape = [[True, True, True, True]]
+        self.shape = np.array([[0,0,0,0],
+                               [0,1,2,3]])
+        self.corners = np.array([[0,-1,0,1,0,-1,0,1],
+                                 [0,-1,0,-1,3,4,3,4]])
         self.r90 = True
         self.r180 = False
         self.chiral = False
@@ -246,7 +249,10 @@ class I4(Piece):
 
 class L4(Piece):
     def __init__(self):
-        self.shape = [[True, True, True],[False, False, True]]
+        self.shape = np.array([[0,1,0,0],
+                               [0,0,1,2]])
+        self.corners = np.array([[0,-1,1,2,1,2,0,-1,0,1],
+                                 [0,-1,0,-1,0,1,2,3,2,3]])
         self.r90 = True
         self.r180 = True
         self.chiral = True
@@ -254,7 +260,10 @@ class L4(Piece):
 
 class N4(Piece):
     def __init__(self):
-        self.shape = [[True, True, False],[False, True, True]]
+        self.shape = np.array([[0,0,1,1],
+                               [0,1,1,2]])
+        self.corners = np.array([[0,-1,0,1,0,-1,1,2,1,0,1,2],
+                                 [0,-1,0,-1,1,2,1,0,2,3,2,3]])
         self.r90 = True
         self.r180 = False
         self.chiral = True
@@ -262,7 +271,10 @@ class N4(Piece):
 
 class O(Piece):
     def __init__(self):
-        self.shape = [[True, True],[True, True]]
+        self.shape = np.array([[0,1,0,1],
+                               [0,0,1,1]])
+        self.corners = np.array([[0,-1,1,2,0,-1,1,2],
+                                 [0,-1,0,-1,1,2,1,2]])
         self.r90 = False
         self.r180 = False
         self.chiral = False
@@ -270,7 +282,10 @@ class O(Piece):
 
 class T4(Piece):
     def __init__(self):
-        self.shape = [[True, True, True],[False, True, False]]
+        self.shape = np.array([[0,1,1,2],
+                               [0,0,1,0]])
+        self.corners = np.array([[0,-1,2,3,1,0,1,2],
+                                 [0,-1,0,-1,1,2,1,2]])
         self.r90 = True
         self.r180 = True
         self.chiral = False
@@ -278,7 +293,10 @@ class T4(Piece):
 
 class I3(Piece):
     def __init__(self):
-        self.shape = [[True, True, True]]
+        self.shape = np.array([[0,0,0],
+                               [0,1,2]])
+        self.corners = np.array([[0,-1,0,1,0,-1,0,1],
+                                 [0,-1,0,-1,2,3,2,3]])
         self.r90 = True
         self.r180 = False
         self.chiral = False
@@ -286,7 +304,10 @@ class I3(Piece):
 
 class V3(Piece):
     def __init__(self):
-        self.shape = [[True, True],[False, True]]
+        self.shape = np.array([[0,1,1],
+                               [0,0,1]])
+        self.corners = np.array([[0,-1,0,-1,1,2,1,0,1,2],
+                                 [0,-1,0,1,0,-1,1,2,1,2]])
         self.r90 = True
         self.r180 = True
         self.chiral = False
@@ -294,7 +315,10 @@ class V3(Piece):
 
 class Two(Piece):
     def __init__(self):
-        self.shape = [[True, True]]
+        self.shape = np.array([[0,0],
+                               [0,1]])
+        self.corners = np.array([[0,-1,0,1,0,-1,0,1],
+                                 [0,-1,0,-1,1,2,1,2]])
         self.r90 = True
         self.r180 = False
         self.chiral = False
@@ -302,7 +326,10 @@ class Two(Piece):
 
 class One(Piece):
     def __init__(self):
-        self.shape = [[True]]
+        self.shape = np.array([[0],
+                               [0]])
+        self.corners = np.array([[0,-1,0,1,0,1,0,-1],
+                                 [0,-1,0,-1,0,1,0,1]])
         self.r90 = False
         self.r180 = False
         self.chiral = False
