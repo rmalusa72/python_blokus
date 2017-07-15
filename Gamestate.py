@@ -1,5 +1,6 @@
 from Pieces import *
 import sys
+import numpy as np
 
 # Initializes a beginning hand with one of each piece
 def initHand():
@@ -29,11 +30,7 @@ def initHand():
 
 # Initializes an empty board of size boardSize
 def initBoard(boardSize):
-    board = list()
-    for i in range(boardSize):
-        board.append(list())
-        for j in range(boardSize):
-            board[i].append(0)
+    board = np.zeros((boardSize,boardSize),dtype=int)
     return board
 
 class Gamestate:
@@ -59,14 +56,14 @@ class Gamestate:
         if color == 4:
             return self.green
 
-    # Given a list of tuple coordinates, set those to int color
+    # Given a 2xn matrix of coordinates, set those to int color
     def colorSet(self, coords, color):
         if not (color in range(1,5)):
             return False
-        for i in range(len(coords)):
-            if self.board[coords[i][0]][coords[i][1]] != 0:
+        for i in range(coords[0].size)):
+            if self.board[coords[1][i]][coords[0][i]] != 0:
                 return False
-            self.board[coords[i][0]][coords[i][1]] = color
+            self.board[coords[1][i]][coords[0][i]] = color
         return True
 
     # Returns true if player color can move, false otherwise
@@ -78,10 +75,7 @@ class Gamestate:
 
     # Function to print board
     def printBoard(self):
-        for i in range(len(self.board[0])):
-            for j in range(len(self.board)):
-                sys.stdout.write(str(self.board[j][i]) + ' ')
-            print('\n')
+        print self.board
 
 
         
