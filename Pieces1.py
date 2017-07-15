@@ -1,7 +1,7 @@
 import numpy as np
 
 # Coordinates are 2x1 matrices
-# Corners are 2x2 matrices where each column is a point
+# Corners are 2x2n matrices where each column is a point
 # Piece shapes are 2xn matrices where each column is a point 
 # Transformation matrices are 2x2 matrices where Ax = T(x)
 
@@ -107,7 +107,8 @@ class Piece:
 
 class F(Piece):
     def __init__(self):
-        self.shape = np.array([[0,1,1,2,1],[0,0,1,1,2]])
+        self.shape = np.array([[0,1,1,2,1],
+                               [0,0,1,1,2]])
         self.corners = np.array([[0,-1,1,2,1,0,1,2,0,-1,2,3,2,3],
                                  [0,-1,0,-1,2,3,2,3,0,1,1,0,1,2]])
         self.r90 = True
@@ -117,8 +118,10 @@ class F(Piece):
 
 class I(Piece):
     def __init__(self):
-        self.shape = np.array([[0,0,0,0,0],[0,1,2,3,4]])
-        self.corners = np.array([[0,-1,0,1,0,-1,0,1],[0,-1,0,-1,4,5,4,5]])
+        self.shape = np.array([[0,0,0,0,0],
+                               [0,1,2,3,4]])
+        self.corners = np.array([[0,-1,0,1,0,-1,0,1],
+                                 [0,-1,0,-1,4,5,4,5]])
         self.r90 = True
         self.r180 = False
         self.chiral = False
@@ -126,8 +129,10 @@ class I(Piece):
 
 class L(Piece):
     def __init__(self):
-        self.shape = np.array([[0,0,0,0,1],[0,1,2,3,0]])
-        self.corners = np.array([[0,-1,1,2,1,2,0,-1,0,1],[0,-1,0,-1,0,1,3,4,3,4]])
+        self.shape = np.array([[0,0,0,0,1],
+                               [0,1,2,3,0]])
+        self.corners = np.array([[0,-1,1,2,1,2,0,-1,0,1],
+                                 [0,-1,0,-1,0,1,3,4,3,4]])
         self.r90 = True
         self.r180 = True
         self.chiral = True
@@ -135,7 +140,9 @@ class L(Piece):
 
 class N(Piece):
     def __init__(self):
-        self.shape = [[True, True, True, False],[False, False, True, True]]
+        self.shape = np.array([[0,1,2,2,3],[0,0,0,1,1]])
+        self.corners = np.array([[0,-1,0,-1,2,3,2,1,3,4,3,4],
+                                 [0,-1,0,1,0,-1,1,2,1,0,1,2]])
         self.r90 = True
         self.r180 = True
         self.chiral = True
@@ -143,7 +150,10 @@ class N(Piece):
 
 class P(Piece):
     def __init__(self):
-        self.shape = [[True, True, True],[True, True, False]]
+        self.shape = np.array([[0,1,0,1,0],
+                               [0,0,1,1,2]])
+        self.corners = np.array([[0,-1,1,2,1,2,0,-1,0,1],
+                                 [0,-1,0,-1,1,2,2,3,2,3]])
         self.r90 = True
         self.r180 = True
         self.chiral = True
@@ -151,7 +161,10 @@ class P(Piece):
 
 class T(Piece):
     def __init__(self):
-        self.shape = [[True, False, False],[True, True, True],[True, False, False]]
+        self.shape = np.array([[0,1,2,1,1],
+                               [0,0,0,1,2]])
+        self.corners = np.array([[0,-1,0,-1,2,3,2,3,1,0,1,2],
+                                 [0,-1,0,1,0,-1,0,1,2,3,2,3]])
         self.r90 = True
         self.r180 = True
         self.chiral = False
@@ -159,7 +172,10 @@ class T(Piece):
 
 class U(Piece):
     def __init__(self):
-        self.shape = [[True, True],[False, True],[True, True]]
+        self.shape = np.array([[0,0,1,2,2],
+                               [0,1,1,1,0]])
+        self.corners = np.array([[0,-1,0,1,0,-1,2,3,2,1,2,3],
+                                 [0,-1,0,-1,1,2,1,2,0,-1,0,-1]])
         self.r90 = True
         self.r180 = True
         self.chiral = False
@@ -167,8 +183,10 @@ class U(Piece):
 
 class V(Piece):
     def __init__(self):
-        self.shape = np.array([[0,1,0,2,0],[0,0,1,0,2]])
-        self.corners = np.array([[0,-1,2,3,2,3,0,-1,0,1],[0,-1,0,-1,0,1,2,3,2,3]])
+        self.shape = np.array([[0,1,0,2,0],
+                               [0,0,1,0,2]])
+        self.corners = np.array([[0,-1,2,3,2,3,0,-1,0,1],
+                                 [0,-1,0,-1,0,1,2,3,2,3]])
         self.r90 = True
         self.r180 = True
         self.chiral = False
@@ -176,7 +194,10 @@ class V(Piece):
 
 class W(Piece):
     def __init__(self):
-        self.shape = [[True, True, False],[False, True, True],[False, False, True]]
+        self.shape = np.array([[0,1,1,2,2],
+                               [0,0,1,1,2]])
+        self.corners = np.array([[0,-1,0,-1,1,2,1,0,2,3,2,1,2,3],
+                                 [0,-1,0,1,0,-1,1,2,1,0,2,3,2,3]])
         self.r90 = True
         self.r180 = True
         self.chiral = True
@@ -184,7 +205,10 @@ class W(Piece):
 
 class X(Piece):
     def __init__(self):
-        self.shape = [[False, True, False],[True, True, True],[False, True, False]]
+        self.shape = np.array([[1,0,1,2,1],
+                               [0,1,1,1,2]])
+        self.corners = np.array([[1,0,1,2,0,-1,0,-1,1,0,1,2,2,3,2,3],
+                                 [0,-1,0,-1,1,0,1,2,2,3,2,3,1,0,1,2]])
         self.r90 = False
         self.r180 = False
         self.chiral = False
@@ -192,7 +216,10 @@ class X(Piece):
 
 class Y(Piece):
     def __init__(self):
-        self.shape = [[True, True, True, True],[False, True, False, False]]
+        self.shape = np.array([[0,0,0,0,1],
+                               [0,1,2,3,1]])
+        self.corners = np.array([[0,-1,0,1,1,2,1,2,0,-1,0,1],
+                                 [0,-1,0,-1,1,0,1,2,3,4,3,4]])
         self.r90 = True
         self.r180 = True
         self.chiral = True
@@ -200,7 +227,10 @@ class Y(Piece):
 
 class Z(Piece):
     def __init__(self):
-        self.shape = [[True, False, False],[True, True, True],[False, False, True]]
+        self.shape = np.array([[0,1,1,1,2],
+                               [0,0,1,2,2]])
+        self.corners = np.array([[0,-1,0,-1,1,2,1,0,2,3,2,3],
+                                 [0,-1,0,1,0,-1,2,3,2,3,2,1]])
         self.r90 = True
         self.r180 = False
         self.chiral = True
