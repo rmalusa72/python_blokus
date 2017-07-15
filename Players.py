@@ -25,7 +25,7 @@ class HumanPlayer(Player):
         while not name in self.referenceHand:
             name = raw_input("Invalid name! Piece name:")
         move = (name, np.zeros((2,self.referenceHand[name].size)))
-        for i in move[1][0].size:
+        for i in range(0,move[1][0].size):
             move[1][0][i] = int(raw_input("x-coord:"))
             move[1][1][i] = int(raw_input("y-coord:"))
         return move

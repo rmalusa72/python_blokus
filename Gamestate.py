@@ -60,7 +60,7 @@ class Gamestate:
     def colorSet(self, coords, color):
         if not (color in range(1,5)):
             return False
-        for i in range(coords[0].size)):
+        for i in range(coords[0].size):
             if self.board[coords[1][i]][coords[0][i]] != 0:
                 return False
             self.board[coords[1][i]][coords[0][i]] = color

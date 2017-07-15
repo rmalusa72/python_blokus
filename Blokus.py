@@ -75,7 +75,7 @@ def moveCheck(move, color):
         if x > 0:
             nears['w'] = np.array([[x-1],[y]])
             if y > 0 and not diagonal:
-                nears['nw'] = np.array[[x-1],[y-1]])
+                nears['nw'] = np.array([[x-1],[y-1]])
             if y < (boardsize-1) and not diagonal:
                 nears['sw'] = np.array([[x-1], [y+1]])
 
@@ -86,7 +86,7 @@ def moveCheck(move, color):
         for dir, coord in nears.items():
             if coord is not False:
                 for j in range(0, move[0].size):
-                    if coord == move[:,j].reshape(2,1):
+                    if np.array_equal(coord,move[:,j].reshape(2,1)):
                         coord = False
 
         # If any laterally adjacent tiles are player color, move is invalid
@@ -113,7 +113,7 @@ def moveCheck(move, color):
         if color == 4:
             corner = np.array([[boardsize-1],[0]])
         for i in range(0, move[0].size):
-            if corner == move[:,i].reshape(2,1):
+            if np.array_equal(corner, move[:,i].reshape(2,1)):
                 diagonal = True
             
     return diagonal
@@ -145,11 +145,11 @@ while passCount != 4:
             while not success:
             # Get move in form of list of tuples - first is piece name, then coords
                 move = players[i].getMove(curr)
-                if len(move) <= 1:       # Valid move is >=2 items long; less than that is a pass
+                if len(move) != 2:       # Valid move is 2 items long; less than that is a pass
                     passCount = passCount + 1
                     success = True
                 elif moveCheck(move, i): # Otherwise check move and set
-                    curr.colorSet(move[1:], i)
+                    curr.colorSet(move[1], i)
                     del curr.getHand(i)[move[0]]
                     success = True
                     passCount = 0

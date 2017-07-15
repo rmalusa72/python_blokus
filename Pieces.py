@@ -107,19 +107,19 @@ class Piece:
     def isThisPiece(self, compare):
         
         boolshape = toBoolArray(self.shape)
-        if boolshape == compare:
+        if np.array_equal(boolshape, compare):
             return True
 
         if self.r90 and self.r180:
             for i in range(3):
                 self.rotate(1)
                 boolshape = toBoolArray(self.shape)
-                if boolshape == compare:
+                if np.array_equal(boolshape, compare):
                     return True
         elif self.r90 and not self.r180:
             self.rotate(1)
             boolshape = toBoolArray(self.shape)
-            if boolshape == compare:
+            if np.array_equal(boolshape, compare):
                 return True
 
         if self.chiral:
@@ -127,19 +127,19 @@ class Piece:
                 self.flipH()
 
             boolshape = toBoolArray(self.shape)
-            if boolshape == compare:
+            if np.array_equal(boolshape, compare):
                 return True
 
             if self.r90 and self.r180:
                 for i in range(3):
                     self.rotate(1)
                     boolshape = toBoolArray(self.shape)
-                    if boolshape == compare:
+                    if np.array_equal(boolshape, compare):
                         return True
             elif self.r90 and not self.r180:
                 self.rotate(1)
                 boolshape = toBoolArray(self.shape)
-                if boolshape == compare:
+                if np.array_equal(boolshape, compare):
                     return True
         
     def __repr__(self):
