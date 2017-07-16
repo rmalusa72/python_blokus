@@ -106,6 +106,11 @@ class Piece:
         else:
             return False
 
+    def translate(self, x,y):
+        self.shape[0] += x
+        self.shape[1] += y
+        self.corners[0] += x
+        self.corners[1] += y
 
     # checks if a given array matches any permutation of this piece
     # compare is a 2d array of bools
