@@ -61,6 +61,7 @@ class Gamestate:
         self.rcorners = startCorner(3, boardsize)
         self.gcorners = startCorner(4, boardsize)
         self.board = initBoard(boardsize)
+        self.boardsize = boardsize
         self.turn = 1
 
     # Returns the hand corresponding to int color    
@@ -98,6 +99,8 @@ class Gamestate:
                     del oldList[j]
                     obliterated = True
                     break
+            if -1 in cur or self.boardsize in cur:
+                continue
             if not obliterated:
                 oldList.append(cur)
                     
