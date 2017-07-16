@@ -61,9 +61,9 @@ class Gamestate:
         if not (color in range(1,5)):
             return False
         for i in range(coords[0].size):
-            if self.board[coords[1][i]][coords[0][i]] != 0:
+            if self.board[coords[1,i]][coords[0,i]] != 0:
                 return False
-            self.board[coords[1][i]][coords[0][i]] = color
+            self.board[coords[1,i]][coords[0,i]] = color
         return True
 
     # Returns true if player color can move, false otherwise

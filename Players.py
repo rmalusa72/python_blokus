@@ -31,10 +31,10 @@ class HumanPlayer(Player):
             success = False
             while not success:
                 try:
-                    move[1][0][i] = int(raw_input("x-coord:"))
-                    move[1][1][i] = int(raw_input("y-coord:"))
-                    if(0 <= move[1][0][i] and 19 >= move [1][0][i]
-                       and 0 <= move[1][1][i] and 19 >= move[1][1][i]):
+                    move[1][0,i] = int(raw_input("x-coord:"))
+                    move[1][1,i] = int(raw_input("y-coord:"))
+                    if(0 <= move[1][0,i] and 19 >= move [1][0,i]
+                       and 0 <= move[1][1,i] and 19 >= move[1][1,i]):
                         success = True
                     else:
                         print("Please enter only numbers between 0 and 19")

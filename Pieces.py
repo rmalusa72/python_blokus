@@ -9,12 +9,12 @@ import numpy as np
 # 'true' at the corresponding point in a 2d array of booleans
 def toBoolArray(points):
     #Find min and max x and y
-    xmin = xmax = points[0][0]
-    ymin = ymax = points[1][0]
+    xmin = xmax = points[0,0]
+    ymin = ymax = points[1,0]
 
     for i in range(0, points[0].size):
-        curx = points[0][i]
-        cury = points[1][i]
+        curx = points[0,i]
+        cury = points[1,i]
         if curx < xmin:
             xmin = curx
         if curx > xmax:
@@ -33,7 +33,7 @@ def toBoolArray(points):
 
     # Switch appropriate points to True
     for i in range(0, points[0].size):
-        shape[points[1][i] - ymin][points[0][i] - xmin] = True
+        shape[points[1,i] - ymin][points[0,i] - xmin] = True
 
     return shape
 

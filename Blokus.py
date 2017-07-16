@@ -45,8 +45,8 @@ def moveCheck(move, color):
     # Now iterate through each tile in the proposed move
     for i in range(0, move[0].size):
 
-        x = move[0][i]
-        y = move[1][i]
+        x = move[0,i]
+        y = move[1,i]
 
         # Reset coordinates (only update diagonals if we don't
         # have one yet)
