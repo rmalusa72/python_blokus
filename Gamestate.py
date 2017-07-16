@@ -32,13 +32,14 @@ def initHand():
 def startCorner(color, boardsize):
     corners = list()
     if color == 1:
-        corners.append(np.array([[0],[0]]))
+        corners.append(np.array([[-1,0],[-1,0]]))
     if color == 2:
-        corners.append(np.array([[0],[boardsize-1]]))
+        corners.append(np.array([[-1,0],[boardsize, boardsize-1]]))
     if color == 3:
-        corners.append(np.array([[boardsize-1],[boardsize-1]]))
+        corners.append(np.array([[boardsize, boardsize-1],
+                                 [boardsize, boardsize-1]]))
     if color == 4:
-        corners.append(np.array([[boardsize-1],[0]]))
+        corners.append(np.array([[boardsize, boardsize-1],[-1,0]]))
     return corners
 
 # Initializes an empty board of size boardSize
@@ -82,6 +83,24 @@ class Gamestate:
             return self.rcorners
         if color == 4:
             return self.gcorners
+
+    # Given a 2x2n matrix of corners, update appropriate color's corner list
+    def updateCorners(self, color, corners):
+        oldList = self.getCorners(color)
+        newCorners = corners[0].size / 2
+        for i in range(0, newCorners):
+            cur = corners[:,2*i:2*(i+1)]
+            inv = np.array([[cur[0,1],cur[0,0]],[cur[1,1],cur[1,0]]])
+            j = 0
+            obliterated = False
+            for j in range(0, len(oldList)):
+                if np.array_equal(oldList[j],inv):
+                    del oldList[j]
+                    obliterated = True
+                    break
+            if not obliterated:
+                oldList.append(cur)
+                    
 
     # Given a 2xn matrix of coordinates, set those to int color
     def colorSet(self, coords, color):

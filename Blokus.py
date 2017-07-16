@@ -149,19 +149,28 @@ while passCount != 4:
                     passCount = passCount + 1
                     success = True
                 elif moveCheck(move, i): # Otherwise check move and set
+                    # Set appropriate squares to player color
                     curr.colorSet(move[1], i)
-                    # moveCheck has put matching piece in hand into
-                    # right orientation;
-                    # now move it to right location by
-                    # translating by difference between (min x, min y) points
+
+                    # Get appropriate piece from hand 
+                    piece = curr.getHand(i)[move[0]]
+
+                    # Find min x, min y from move coords and move
+                    # piece to match move's location (movecheck set right orientation)
                     # NOTE: getting min x, min y this many times is inefficient!
                     # fix later
                     move_extremes = findExtremes(move[1])
                     move_xmin, move_ymin = move_extremes[0], move_extremes[2]
-                    piece_extremes = findExtremes(getHand(i)[move[0]].shape)
+                    piece_extremes = findExtremes(piece.shape)
                     piece_xmin, piece_ymin = piece_extremes[0],piece_extremes[2]
                     xdif = move_xmin - piece_xmin
                     ydif = move_ymin - piece_ymin
+                    piece.translate(xdif, ydif)
+                    
+                    # Now piece.corners has actual corners!!! Update corner list
+                    curr.updateCorners(i, piece.corners)
+                    for j in range(0, len(piece.corners)):
+                        print(piece.corners[j]
                     
                     del curr.getHand(i)[move[0]]
                     success = True
