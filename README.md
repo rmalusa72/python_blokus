@@ -1,3 +1,3 @@
 # python_blokus
 WIP Blokus game + AI 
-Status: Pieces + gamestate are updated for new piece storage system, other files are not
+Status: Updated to new system and works as well as before; haven't done anything with corners or canmove yet & want to sort printed hands
