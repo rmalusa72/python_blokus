@@ -20,13 +20,13 @@ def moveCheck(move, color):
     move = move[1]
     
     # If the # of tuples is not the same as the size of the piece, move is illegal
-    if not move[0].size == referenceHand[name].size:
+    if not move[0].size == curr.getHand(color)[name].size:
         return False
     
     shape = toBoolArray(move)
 
     # Compare shape of coordinate tuples in move to the piece they claim to be
-    if not referenceHand[name].isThisPiece(shape):
+    if not curr.getHand(color)[name].isThisPiece(shape):
         return False
 
     # Now we know the piece is the right size, shape, & possessed by the player,
@@ -122,7 +122,7 @@ def moveCheck(move, color):
 # MAIN GAME CODE STARTS HERE
 
 # Initialize current gamestate variable
-curr = Gamestate()
+curr = Gamestate(20)
 referenceHand = initHand() # Reference hand with all pieces, for checks/etc
 
 # Fill list of players with humans and AIs, based on player input
@@ -150,6 +150,19 @@ while passCount != 4:
                     success = True
                 elif moveCheck(move, i): # Otherwise check move and set
                     curr.colorSet(move[1], i)
+                    # moveCheck has put matching piece in hand into
+                    # right orientation;
+                    # now move it to right location by
+                    # translating by difference between (min x, min y) points
+                    # NOTE: getting min x, min y this many times is inefficient!
+                    # fix later
+                    move_extremes = findExtremes(move[1])
+                    move_xmin, move_ymin = move_extremes[0], move_extremes[2]
+                    piece_extremes = findExtremes(getHand(i)[move[0]].shape)
+                    piece_xmin, piece_ymin = piece_extremes[0],piece_extremes[2]
+                    xdif = move_xmin - piece_xmin
+                    ydif = move_ymin - piece_ymin
+                    
                     del curr.getHand(i)[move[0]]
                     success = True
                     passCount = 0

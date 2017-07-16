@@ -5,10 +5,8 @@ import numpy as np
 # Piece shapes are 2xn matrices where each column is a point 
 # Transformation matrices are 2x2 matrices where Ax = T(x)
 
-# Converts each point in a 2xn array of points into a
-# 'true' at the corresponding point in a 2d array of booleans
-def toBoolArray(points):
-    #Find min and max x and y
+# Finds the minimum and maximum x and y in a 2xn array of points
+def findExtremes(points):
     xmin = xmax = points[0,0]
     ymin = ymax = points[1,0]
 
@@ -23,6 +21,13 @@ def toBoolArray(points):
             ymin = cury
         if cury > ymax:
             ymax = cury
+    return (xmin, xmax, ymin, ymax)
+    
+# Converts each point in a 2xn array of points into a
+# 'true' at the corresponding point in a 2d array of booleans
+def toBoolArray(points):
+    #Get min and max x and y
+    xmin, xmax, ymin, ymax = findExtremes
 
     # Find width and height
     width = xmax - xmin + 1

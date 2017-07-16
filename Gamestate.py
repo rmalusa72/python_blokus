@@ -112,5 +112,5 @@ class Gamestate:
         sys.stdout.write("\n")
 
     # Copy this gamestate
-    def copy(self):
+    #def copy(self):
         # IMPLEMENT THIS
