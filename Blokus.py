@@ -169,8 +169,8 @@ while passCount != 4:
                     
                     # Now piece.corners has actual corners!!! Update corner list
                     curr.updateCorners(i, piece.corners)
-                    for j in range(0, len(piece.corners)):
-                        print(piece.corners[j]
+                    for j in range(0, len(curr.getCorners(i))):
+                        print(curr.getCorners(i)[j])
                     
                     del curr.getHand(i)[move[0]]
                     success = True

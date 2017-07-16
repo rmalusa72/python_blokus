@@ -85,13 +85,13 @@ class Gamestate:
             return self.gcorners
 
     # Given a 2x2n matrix of corners, update appropriate color's corner list
+    # TO IMPLEMENT: delete corners that point off the board
     def updateCorners(self, color, corners):
         oldList = self.getCorners(color)
         newCorners = corners[0].size / 2
         for i in range(0, newCorners):
             cur = corners[:,2*i:2*(i+1)]
             inv = np.array([[cur[0,1],cur[0,0]],[cur[1,1],cur[1,0]]])
-            j = 0
             obliterated = False
             for j in range(0, len(oldList)):
                 if np.array_equal(oldList[j],inv):
