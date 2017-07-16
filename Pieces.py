@@ -5,10 +5,8 @@ import numpy as np
 # Piece shapes are 2xn matrices where each column is a point 
 # Transformation matrices are 2x2 matrices where Ax = T(x)
 
-# Converts each point in a 2xn array of points into a
-# 'true' at the corresponding point in a 2d array of booleans
-def toBoolArray(points):
-    #Find min and max x and y
+# Finds the minimum and maximum x and y in a 2xn array of points
+def findExtremes(points):
     xmin = xmax = points[0,0]
     ymin = ymax = points[1,0]
 
@@ -23,6 +21,13 @@ def toBoolArray(points):
             ymin = cury
         if cury > ymax:
             ymax = cury
+    return (xmin, xmax, ymin, ymax)
+    
+# Converts each point in a 2xn array of points into a
+# 'true' at the corresponding point in a 2d array of booleans
+def toBoolArray(points):
+    #Get min and max x and y
+    xmin, xmax, ymin, ymax = findExtremes(points)
 
     # Find width and height
     width = xmax - xmin + 1
@@ -101,6 +106,11 @@ class Piece:
         else:
             return False
 
+    def translate(self, x,y):
+        self.shape[0] += x
+        self.shape[1] += y
+        self.corners[0] += x
+        self.corners[1] += y
 
     # checks if a given array matches any permutation of this piece
     # compare is a 2d array of bools
@@ -215,8 +225,8 @@ class U(Piece):
     def __init__(self):
         self.shape = np.array([[0,0,1,2,2],
                                [0,1,1,1,0]])
-        self.corners = np.array([[0,-1,0,-1,2,3,2,1,2,3],
-                                 [0,-1,1,2,1,2,0,-1,0,-1]])
+        self.corners = np.array([[0,-1,0,1,0,-1,2,3,2,1,2,3],
+                                 [0,-1,0,-1,1,2,1,2,0,-1,0,-1]])
         self.r90 = True
         self.r180 = True
         self.chiral = False
