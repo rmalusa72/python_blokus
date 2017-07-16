@@ -77,5 +77,8 @@ class Gamestate:
     def printBoard(self):
         print self.board
 
-
-
+    def printHand(self, i):
+        hand = self.getHand(i)
+        for name, piece in hand.items():
+            sys.stdout.write(name + ' ')
+        sys.stdout.write("\n")
