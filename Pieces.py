@@ -53,10 +53,10 @@ class Piece:
 
     # orientation: 3 bits represent direction and whether flipped (if chiral)
     # first bit is axis aligned with, second bit is direction on that axis, third is whether flipped
-    # 0b000 is north, 0b001 is north (flipped)
-    # 0b100 is west, 0b101 is west (flipped)
-    # 0b010 is south, 0b011 is south (flipped)
-    # 0b110 is east, 0b111 is east (flipped)
+    # 0b000 (0) is north, 0b001 (1) is north (flipped)
+    # 0b100 (4) is west, 0b101 (5) is west (flipped)
+    # 0b010 (2) is south, 0b011 (3) is south (flipped)
+    # 0b110 (6) is east, 0b111 (7) is east (flipped)
 
     # flips piece horizontally
     def flipH(self):
@@ -88,7 +88,7 @@ class Piece:
         # Update orientation - always flip 3rd bit,
         # flip 2nd bit if piece is "vertically" aligned (points north or south)
         self.orientation ^= 0b001
-        if self.orientation & 0b100:
+        if not self.orientation & 0b100:
             self.orientation ^= 0b010
 
     # rotates piece 90*turns degrees ccw
