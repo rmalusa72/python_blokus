@@ -51,21 +51,29 @@ class Piece:
     # shape: 2xn array of coordinates where n = size of piece
     # corners: 2x2c array of coordinates where c = number of corners
 
+    # orientation: 3 bits represent direction and whether flipped (if chiral)
+    # first bit is axis aligned with, second bit is direction on that axis, third is whether flipped
+    # 0b000 is north, 0b001 is north (flipped)
+    # 0b100 is west, 0b101 is west (flipped)
+    # 0b010 is south, 0b011 is south (flipped)
+    # 0b110 is east, 0b111 is east (flipped)
+
     # flips piece horizontally
-    # returns True if the shape has changed, false otherwise
     def flipH(self):
         hflip = np.array([[-1, 0],[0,1]])
 
         # Flip corners
         self.corners = np.dot(hflip, self.corners)
 
-        # Save original shape for comparison, then flip shape
-        original = np.copy(self.shape)
+        # Flip shape
         self.shape = np.dot(hflip, self.shape)
 
-        o = toBoolArray(original)
-        s = toBoolArray(self.shape)
-        return not np.array_equal(o,s)
+        # Update orientation - always flip 3rd bit,
+        # flip 2nd bit if piece is "horizontally" aligned (points east or west)
+        self.orientation ^= 0b001
+        if self.orientation & 0b100:
+            self.orientation ^= 0b010
+        
 
     # flips piece vertically
     def flipV(self):
@@ -74,13 +82,14 @@ class Piece:
         # Flip corners
         self.corners = np.dot(vflip, self.corners)
 
-        # Save original self for comparison, then flip shape
-        original = np.copy(self.shape)
+        # Flip shape
         self.shape = np.dot(vflip, self.shape)
 
-        o = toBoolArray(original)
-        s = toBoolArray(self.shape)
-        return not np.array_equal(o,s)
+        # Update orientation - always flip 3rd bit,
+        # flip 2nd bit if piece is "vertically" aligned (points north or south)
+        self.orientation ^= 0b001
+        if self.orientation & 0b100:
+            self.orientation ^= 0b010
 
     # rotates piece 90*turns degrees ccw
     # NOTE: rotation matrices are for cw turns bc of y axis pointing down
@@ -92,20 +101,41 @@ class Piece:
             rmat = np.array([[0,1],[-1,0]])
             self.corners = np.dot(rmat, self.corners)
             self.shape = np.dot(rmat, self.shape)
+
+            # update orientation - if "vertically" aligned,
+            # flip only first, else flip first and second
+            if not self.orientation & 0b100:
+                self.orientation ^= 0b100
+            else:
+                self.orientation ^= 0b110
+            
             return True
         elif turns == 2 and self.r180:
             rmat = np.array([[-1,0],[0,-1]])
             self.corners = np.dot(rmat, self.corners)
             self.shape = np.dot(rmat, self.shape)
+
+            # update orientation - flip second bit
+            self.orientation ^= 0b010
+
             return True
         elif turns == 3 and self.r90:
             rmat = np.array([[0,-1],[1,0]])
             self.corners = np.dot(rmat, self.corners)
             self.shape = np.dot(rmat, self.shape)
+
+            # update orientation - if "horizontally" aligned,
+            # flip only first, else flip first and second
+            if self.orientation & 0b100:
+                self.orientation ^= 0b100
+            else:
+                self.orientation ^= 0b110
+            
             return True
         else:
             return False
 
+    # Translates all coordinates in a piece by x and y
     def translate(self, x,y):
         self.shape[0] += x
         self.shape[1] += y
@@ -133,8 +163,7 @@ class Piece:
                 return True
 
         if self.chiral:
-            if not self.flipV():
-                self.flipH()
+            self.flipV()
 
             boolshape = toBoolArray(self.shape)
             if np.array_equal(boolshape, compare):
