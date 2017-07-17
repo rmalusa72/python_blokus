@@ -187,7 +187,7 @@ class Piece:
 
 class F(Piece):
     def __init__(self):
-        self.shape = np.arrayarray([[ 0, -1, -1, -2, -1],
+        self.shape = np.array([[ 0, -1, -1, -2, -1],
                                     [ 0,  0,  1,  1,  2]])
         self.corners = np.array([[ 0,  1, -1, -2, -1,  0, -1, -2,  0,  1, -2, -3, -2, -3],
                                  [ 0, -1,  0, -1,  2,  3,  2,  3,  0,  1,  1,  0,  1,  2]])
