@@ -1,10 +1,11 @@
+# BLOKUS.PY
+# Main file containing setup and gameplay loop 
+
 import sys
 import numpy as np
 from Pieces import *
 from Gamestate import *
 from Players import *
-
-# Main file containing setup and main game loop 
 
 # Initialize current gamestate variable
 curr = Gamestate(20)
@@ -37,7 +38,6 @@ for i in range(1,5):
 passCount = 0 
 while passCount != 4:
     movelist = curr.listMoves()
-    print(movelist)
     if len(movelist) != 0:
         # Repeat ask-for-move loop until valid move successfully acquired
         success = False

@@ -1,7 +1,9 @@
+# PLAYERS.PY
+# Contains an abstract player class and human and AI variants with their own
+# getMove functions
+
 import numpy as np
 from Gamestate import *
-
-# Contains an abstract(ish) player class, and the human and AI variants with their own getMove methods
 
 class Player:
     def __init__(self, color):

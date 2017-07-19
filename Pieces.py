@@ -1,9 +1,15 @@
-import numpy as np
+# PIECES.PY
+# Functions for use with pieces, abstract piece class with functions for
+# transformations, and specific pieces extending it 
 
 # Coordinates are 2x1 matrices
-# Corners are 2x2n matrices where each column is a point
-# Piece shapes are 2xn matrices where each column is a point 
+# Each corner is represented as a 2x2 matrix, one coordinate on the block and one
+# outside of it 
+# Sets of corners are stored as 2x2n matrices
+# Piece shapes are 2xn matrices where each column is a coordinate
 # Transformation matrices are 2x2 matrices where Ax = T(x)
+
+import numpy as np
 
 # Finds the minimum and maximum x and y in a 2xn array of points
 def findExtremes(points):
@@ -73,7 +79,6 @@ class Piece:
         self.orientation ^= 0b001
         if self.orientation & 0b100:
             self.orientation ^= 0b010
-        
 
     # flips piece vertically
     def flipV(self):
@@ -95,7 +100,6 @@ class Piece:
     # NOTE: rotation matrices are for cw turns bc of y axis pointing down
     # in matrix indexing
     # returns false if turns is not between one and three
-    # or if rotation makes no change
     def rotate(self, turns):
         if turns == 1 and self.r90:
             rmat = np.array([[0,1],[-1,0]])
@@ -142,8 +146,7 @@ class Piece:
         self.corners[0] += x
         self.corners[1] += y
 
-    # checks if a given array matches any permutation of this piece
-    # compare is a 2d array of bools
+    # checks if a given 2d array of bools matches any permutation of this piece
     def isThisPiece(self, compare):
         
         boolshape = toBoolArray(self.shape)

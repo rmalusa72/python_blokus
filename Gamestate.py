@@ -1,7 +1,10 @@
+# GAMESTATE.PY
+# Contains a class representing a specific state in the game space - turn, hands,
+# board, etc. - and functions useful for setup of gamestates
+
 from Pieces import *
 import sys
 import numpy as np
-import pdb
 
 # Initializes a beginning hand with one of each piece
 def initHand():
@@ -240,13 +243,6 @@ class Gamestate:
             self.board[coords[1,i]][coords[0,i]] = color
         return True
 
-    # NOTE: redundant?
-    # Returns true if player color can move, false otherwise
-    def canMove(self, color):
-        if len(self.getHand(color)) == 0:
-            return False
-        return True
-
     # Returns list of possible moves for current player
     def listMoves(self):
         rtn = list()
@@ -283,7 +279,6 @@ class Gamestate:
                     piece.rotate(1)
                     rtn.extend(self.findPieceMoves(name, piece))
         return rtn
-
 
     # Find all moves for a given piece in a specific orientation
     def findPieceMoves(self, name, p):
