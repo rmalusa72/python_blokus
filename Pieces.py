@@ -146,6 +146,14 @@ class Piece:
         self.corners[0] += x
         self.corners[1] += y
 
+    # Given an orientation (in 3-bit form explained above),
+    # flips and/or rotates this piece into that orientation
+    def setOrientation(self, new_orientation):
+        if self.orientation & 0b001 != new_orientation & 0b001:
+            self.flipH()
+        while self.orientation != new_orientation:
+            self.rotate(1)
+
     # checks if a given 2d array of bools matches any permutation of this piece
     def isThisPiece(self, compare):
         
