@@ -64,6 +64,124 @@ class Gamestate:
         self.boardsize = boardsize
         self.turn = 1
 
+    # Returns whether a move (as (name, coord array) tuple) is legal
+    def moveCheck(self, move):
+
+        name = move[0]
+        color = self.turn
+
+        # If player doesn't have piece, move is illegal
+        if not name in self.getHand(color):
+            return False
+
+        # Reassign move to array of coordinates
+        move = move[1]
+
+        # If the # of coords is not the same as the size of the piece, move is illegal
+        if not move[0].size == self.getHand(color)[name].size:
+            return False
+
+        # Convert coords to boolean array w/correct shape, check against piece shape
+        # If no match, move is illegal. isThisPiece also moves appropriate piece in
+        # player's hand into orientation matching proposed move
+        shape = toBoolArray(move)
+        if not self.getHand(color)[name].isThisPiece(shape):
+            return False
+
+        # Now knowing the piece is the right size, shape, & possessed by the player,
+        # check if the actual move is valid.
+
+        # This dict with string keys will have values that are either 2x1 arrays
+        # (for points to check, surrounding each tile in proposed move) or False
+        # (if the points are off the board or also in the proposed move)
+        nears = dict()
+
+        # whether we have found a successful diagonal connection
+        # NOTE: Change this to use corner list?
+        diagonal = False
+
+        # Now iterate through each tile in the proposed move
+        for i in range(0, move[0].size):
+
+            x = move[0,i]
+            y = move[1,i]
+
+            # Reset coordinates (only update diagonals if we don't
+            # have one yet)
+            nears['e'] = False
+            nears['s'] = False
+            nears['w'] = False
+            nears['n'] = False
+
+            if not diagonal: 
+                nears['ne'] = False
+                nears['nw'] = False
+                nears['se'] = False
+                nears['sw'] = False
+
+            # Now change 'nears' to appropriate coordinates where they exist
+            if x < (boardsize - 1):
+                nears['e'] = np.array([[x+1],[y]])
+                if y > 0 and not diagonal:
+                    nears['ne'] = np.array([[x+1],[y-1]])
+                if y < (boardsize - 1) and not diagonal:
+                    nears['se'] = np.array([[x+1],[y+1]])
+
+            if y < (boardsize - 1):
+                nears['s'] = np.array([[x],[y+1]])
+
+            if x > 0:
+                nears['w'] = np.array([[x-1],[y]])
+                if y > 0 and not diagonal:
+                    nears['nw'] = np.array([[x-1],[y-1]])
+                if y < (boardsize-1) and not diagonal:
+                    nears['sw'] = np.array([[x-1], [y+1]])
+
+            if y > 0:
+                nears['n'] = np.array([[x],[y-1]])
+
+            # Disregard coordinates that are in the set of tiles in the move itself
+            for dir, coord in nears.items():
+                if coord is not False:
+                    for j in range(0, move[0].size):
+                        if np.array_equal(coord,move[:,j].reshape(2,1)):
+                            coord = False
+
+            # If any laterally adjacent tiles are player color, move is invalid
+            for dir in ['e', 's', 'n', 'w']:
+                if nears[dir] is not False:
+                    if curr.board[nears[dir][1,0]][nears[dir][0,0]] == color: 
+                        return False
+
+            # If any diagonally adjacent tiles are player color, set diagonal to true
+            for dir in ['ne','nw','se','sw']:
+                if nears[dir] is not False:
+                    if curr.board[nears[dir][1,0]][nears[dir][0,0]] == color:
+                        diagonal = True
+
+        # If this is the first piece the player places, they don't need a diagonal
+        # connection, but do need it to touch a corner
+        if len(self.getHand(color)) == 21:
+            if color == 1:
+                corner = np.array([[0],[0]])
+            if color == 2:
+                corner = np.array([[0],[boardsize-1]])
+            if color == 3:
+                corner = np.array([[boardsize-1],[boardsize-1]])
+            if color == 4:
+                corner = np.array([[boardsize-1],[0]])
+            for i in range(0, move[0].size):
+                if np.array_equal(corner, move[:,i].reshape(2,1)):
+                    diagonal = True
+
+        return diagonal
+
+    # Checks whether a move (as a piece translated to a specific location)
+    # is valid. Used when We already know it touches a corner and is a piece
+    # in hand, so check only for adjacencies/overlaps
+    # def moveConflicts(self, p):
+        
+        
     # Update turn to next player
     def advanceTurn(self):
         self.turn = self.turn + 1
@@ -169,21 +287,27 @@ class Gamestate:
 
     # Find all moves for a given piece in a specific orientation
     def findPieceMoves(self, p):
-        corners = self.getCorners(self.turn)
+        bcorners = self.getCorners(self.turn)
         
-        # For each corner on that permutation...
+        # For each corner pc on the piece...
         pcorners = p.corners
         pclen = pcorners[0].size / 2
         for i in range(0, pclen):
             pc = pcorners[:,2*i:2*(i+1)]
 
-            # For each corner on the board...
-            for c in corners:
-                # check if pc matches c
-                # if yes, check if putting piece there is a valid move
-                # if yes, add move to list
-                # NOTE: this is filler so c doesn't yell at me about indentation
-                x = 0
+            # For each corner bc on the board...
+            for bc in bcorners:
+
+                # Check if orientation of pc matches bc:
+                if ((pc[0,1] - pc[0,0]) == (bc[0,1] - bc[0,0]) and
+                    (pc[1,1] - pc[1,0]) == (bc[1,1] - bc[1,0])):
+
+                    # Move piece to matching location
+                    p.translate(bc[0,0] - pc[0,0], bc[1,0] - pc[1,0])
+
+                    # Now check if move is appropriate
+                    # IMPLEMENT THIS
+
     
     # Print board
     def printBoard(self):
