@@ -198,6 +198,7 @@ class Piece:
 
 class F(Piece):
     def __init__(self):
+        self.name = "F"
         self.shape = np.array([[ 0, -1, -1, -2, -1],
                                     [ 0,  0,  1,  1,  2]])
         self.corners = np.array([[ 0,  1, -1, -2, -1,  0, -1, -2,  0,  1, -2, -3, -2, -3],
@@ -211,6 +212,7 @@ class F(Piece):
 
 class I(Piece):
     def __init__(self):
+        self.name = "I"
         self.shape = np.array([[0,0,0,0,0],
                                [0,1,2,3,4]])
         self.corners = np.array([[0,-1,0,1,0,-1,0,1],
@@ -224,6 +226,7 @@ class I(Piece):
 
 class L(Piece):
     def __init__(self):
+        self.name = "L"
         self.shape = np.array([[ 0,  0,  0,  0,  1],
                                [ 0, -1, -2, -3,  0]])
         self.corners = np.array([[ 0, -1,  1,  2,  1,  2,  0, -1,  0,  1],
@@ -237,6 +240,7 @@ class L(Piece):
 
 class N(Piece):
     def __init__(self):
+        self.name = "N"
         self.shape = np.array([[ 0,  0,  0,  1,  1],
                                [ 0, -1, -2, -2, -3]])
         self.corners = np.array([[ 0, -1,  0,  1,  0, -1,  1,  2,  1,  0,  1,  2],
@@ -250,6 +254,7 @@ class N(Piece):
     
 class P(Piece):
     def __init__(self):
+        self.name = "P"
         self.shape = np.array([[0,1,0,1,0],
                                [0,0,1,1,2]])
         self.corners = np.array([[0,-1,1,2,1,2,0,-1,0,1],
@@ -263,6 +268,7 @@ class P(Piece):
 
 class T(Piece):
     def __init__(self):
+        self.name = "T"
         self.shape = np.array([[0,1,2,1,1],
                                [0,0,0,1,2]])
         self.corners = np.array([[0,-1,0,-1,2,3,2,3,1,0,1,2],
@@ -276,6 +282,7 @@ class T(Piece):
 
 class U(Piece):
     def __init__(self):
+        self.name = "U"
         self.shape = np.array([[0,0,1,2,2],
                                [0,1,1,1,0]])
         self.corners = np.array([[0,-1,0,1,0,-1,2,3,2,1,2,3],
@@ -289,6 +296,7 @@ class U(Piece):
 
 class V(Piece):
     def __init__(self):
+        self.name = "V"
         self.shape = np.array([[ 0,  0,  1,  0,  2],
                                [ 0, -1,  0, -2,  0]])
         self.corners = np.array([[ 0, -1,  0, -1,  0,  1,  2,  3,  2,  3],
@@ -303,6 +311,7 @@ class V(Piece):
 
 class W(Piece):
     def __init__(self):
+        self.name = "W"
         self.shape = np.array([[ 0, -1, -1, -2, -2],
                                [ 0,  0, -1, -1, -2]])
         self.corners = np.array([[ 0,  1,  0,  1, -1, -2, -1,  0, -2, -3, -2, -1, -2, -3],
@@ -317,6 +326,7 @@ class W(Piece):
 
 class X(Piece):
     def __init__(self):
+        self.name = "X"
         self.shape = np.array([[1,0,1,2,1],
                                [0,1,1,1,2]])
         self.corners = np.array([[1,0,1,2,0,-1,0,-1,1,0,1,2,2,3,2,3],
@@ -330,6 +340,7 @@ class X(Piece):
 
 class Y(Piece):
     def __init__(self):
+        self.name = "Y"
         self.shape = np.array([[ 0,  0,  0,  0, -1],
                                [ 0,  1,  2,  3,  1]])
         self.corners = np.array([[ 0,  1,  0, -1, -1, -2, -1, -2,  0,  1,  0, -1],
@@ -343,6 +354,7 @@ class Y(Piece):
 
 class Z(Piece):
     def __init__(self):
+        self.name = "Z"
         self.shape = np.array([[0,1,1,1,2],
                                [0,0,1,2,2]])
         self.corners = np.array([[0,-1,0,-1,1,2,1,0,2,3,2,3],
@@ -356,6 +368,7 @@ class Z(Piece):
 
 class I4(Piece):
     def __init__(self):
+        self.name = "I4"
         self.shape = np.array([[0,0,0,0],
                                [0,1,2,3]])
         self.corners = np.array([[0,-1,0,1,0,-1,0,1],
@@ -369,6 +382,7 @@ class I4(Piece):
 
 class L4(Piece):
     def __init__(self):
+        self.name = "L4"
         self.shape = np.array([[ 0,  1,  0,  0],
                                [ 0,  0, -1, -2]])
         self.corners = np.array([[ 0, -1,  1,  2,  1,  2,  0, -1,  0,  1],
@@ -382,6 +396,7 @@ class L4(Piece):
 
 class N4(Piece):
     def __init__(self):
+        self.name = "N4"
         self.shape = np.array([[ 0,  0, -1, -1],
                                [ 0,  1,  1,  2]])
         self.corners = np.array([[ 0,  1,  0, -1,  0,  1, -1, -2, -1,  0, -1, -2],
@@ -396,6 +411,7 @@ class N4(Piece):
 
 class O(Piece):
     def __init__(self):
+        self.name = "O"
         self.shape = np.array([[0,1,0,1],
                                [0,0,1,1]])
         self.corners = np.array([[0,-1,1,2,0,-1,1,2],
@@ -409,6 +425,7 @@ class O(Piece):
 
 class T4(Piece):
     def __init__(self):
+        self.name = "T4"
         self.shape = np.array([[0,1,1,2],
                                [0,0,1,0]])
         self.corners = np.array([[0,-1,2,3,1,0,1,2],
@@ -422,6 +439,7 @@ class T4(Piece):
 
 class I3(Piece):
     def __init__(self):
+        self.name = "I3"
         self.shape = np.array([[0,0,0],
                                [0,1,2]])
         self.corners = np.array([[0,-1,0,1,0,-1,0,1],
@@ -435,6 +453,7 @@ class I3(Piece):
 
 class V3(Piece):
     def __init__(self):
+        self.name = "V3"
         self.shape = np.array([[ 0, -1, -1],
                                [ 0,  0, -1]])
         self.corners = np.array([[ 0,  1,  0,  1, -1, -2, -1,  0, -1, -2],
@@ -448,6 +467,7 @@ class V3(Piece):
 
 class Two(Piece):
     def __init__(self):
+        self.name = "Two"
         self.shape = np.array([[0,0],
                                [0,1]])
         self.corners = np.array([[0,-1,0,1,0,-1,0,1],
@@ -461,6 +481,7 @@ class Two(Piece):
 
 class One(Piece):
     def __init__(self):
+        self.name = "One"
         self.shape = np.array([[0],
                                [0]])
         self.corners = np.array([[0,-1,0,1,0,1,0,-1],

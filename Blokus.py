@@ -38,6 +38,7 @@ for i in range(1,5):
 passCount = 0 
 while passCount != 4:
     movelist = curr.listMoves()
+    print(movelist)
     if len(movelist) != 0:
         # Repeat ask-for-move loop until valid move successfully acquired
         success = False

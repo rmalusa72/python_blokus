@@ -205,6 +205,21 @@ class Gamestate:
         if color == 4:
             return self.green
 
+    # Returns a hand as a list sorted by piece size
+    def sortedHand(self, color):
+        rtn = list()
+        hand = self.getHand(color)
+        sortednames = ["F","I","L","N","P","T","U","V","W","X","Y","Z",
+                       "I4", "L4", "N4", "O", "T4",
+                       "I3","V3",
+                       "Two",
+                       "One"]
+        for name in sortednames:
+            if name in hand:
+                rtn.append(hand[name])
+        return rtn
+
+    # Returns the corner list corresponding to int color
     def getCorners(self, color):
         if color == 1:
             return self.bcorners
@@ -256,32 +271,33 @@ class Gamestate:
 
         # For each piece, find list of moves for each orientation
         # with findPieceMoves
-        for (name, piece) in hand.items():
-            rtn.extend(self.findPieceMoves(name, piece))
+        sortedHand = self.sortedHand(self.turn)
+        for piece in sortedHand:
+            rtn.extend(self.findPieceMoves(piece))
 
             if piece.r90 and piece.r180:
                 for i in range(3):
                     piece.rotate(1)
-                    rtn.extend(self.findPieceMoves(name, piece))
+                    rtn.extend(self.findPieceMoves(piece))
             elif piece.r90 and not piece.r180:
                 piece.rotate(1)
-                rtn.extend(self.findPieceMoves(name, piece))
+                rtn.extend(self.findPieceMoves(piece))
                 
             if piece.chiral:
                 piece.flipV()
-                rtn.extend(self.findPieceMoves(name, piece))
+                rtn.extend(self.findPieceMoves(piece))
 
                 if piece.r90 and piece.r180:
                     for i in range(3):
                         piece.rotate(1)
-                        rtn.extend(self.findPieceMoves(name, piece))
+                        rtn.extend(self.findPieceMoves(piece))
                 elif piece.r90 and not piece.r180:
                     piece.rotate(1)
-                    rtn.extend(self.findPieceMoves(name, piece))
+                    rtn.extend(self.findPieceMoves(piece))
         return rtn
 
     # Find all moves for a given piece in a specific orientation
-    def findPieceMoves(self, name, p):
+    def findPieceMoves(self, p):
 
         rtn = list()
         bcorners = self.getCorners(self.turn)
@@ -312,7 +328,7 @@ class Gamestate:
                     
                     # Now check if move is appropriate
                     if not self.moveConflicts(p):
-                        rtn.append((name, p.orientation, piece_xmin, piece_ymin))
+                        rtn.append((p.name, p.orientation, piece_xmin, piece_ymin))
 
         return rtn
     
@@ -325,6 +341,13 @@ class Gamestate:
         hand = self.getHand(i)
         for name, piece in hand.items():
             sys.stdout.write(name + ' ')
+        sys.stdout.write("\n")
+
+    # Print a player's hand sorted by piece size
+    def printSortedHand(self, i):
+        sortedhand = self.sortedHand(i)
+        for p in sortedhand:
+            sys.stdout.write(p.name + ' ')
         sys.stdout.write("\n")
     
     # Copy this gamestate

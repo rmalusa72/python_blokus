@@ -24,8 +24,7 @@ class HumanPlayer(Player):
     def getMove(self, update):
         update.printBoard()
         print("Player" + str(self.color) + ", your hand contains:")
-        update.printHand(self.color)
-
+        update.printSortedHand(self.color)
         name = raw_input("Type name of piece to play, or 'pass' to pass:")
         if name == "pass":
             return list()
