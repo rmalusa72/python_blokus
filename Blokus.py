@@ -6,8 +6,7 @@ from Players import *
 
 # Main file containing setup and main game loop 
             
-# Function to check if a move is legal (move is a list where first item is name and
-# rest of list is coordinate tuples)
+# Returns whether a move (as (name, coord array) tuple) is legal
 def moveCheck(move, color):
 
     name = move[0]
@@ -16,28 +15,30 @@ def moveCheck(move, color):
     if not name in curr.getHand(color):
         return False
 
-    # Move is now the nparray of coordinates
+    # Reassign move to array of coordinates
     move = move[1]
     
-    # If the # of tuples is not the same as the size of the piece, move is illegal
+    # If the # of coords is not the same as the size of the piece, move is illegal
     if not move[0].size == curr.getHand(color)[name].size:
         return False
-    
-    shape = toBoolArray(move)
 
-    # Compare shape of coordinate tuples in move to the piece they claim to be
+    # Convert coords to boolean array w/correct shape, check against piece shape
+    # If no match, move is illegal. isThisPiece also moves appropriate piece in
+    # player's hand into orientation matching proposed move
+    shape = toBoolArray(move)
     if not curr.getHand(color)[name].isThisPiece(shape):
         return False
 
-    # Now we know the piece is the right size, shape, & possessed by the player,
-    # and can check if the actual move is valid.
+    # Now knowing the piece is the right size, shape, & possessed by the player,
+    # check if the actual move is valid.
     
-    # This dict with string keys and bool values will contain either 2x1 arrays
+    # This dict with string keys will have values that are either 2x1 arrays
     # (for points to check, surrounding each tile in proposed move) or False
     # (if the points are off the board or also in the proposed move)
     nears = dict()
 
     # whether we have found a successful diagonal connection
+    # NOTE: Change this to use corner list?
     diagonal = False
 
     boardsize = curr.board[0].size
@@ -123,7 +124,7 @@ def moveCheck(move, color):
 
 # Initialize current gamestate variable
 curr = Gamestate(20)
-referenceHand = initHand() # Reference hand with all pieces, for checks/etc
+referenceHand = initHand() # for checks, etc.
 
 # Fill list of players with humans and AIs, based on player input
 players = dict()
@@ -142,25 +143,26 @@ for i in range(1,5):
         except ValueError as e:
             print("Please enter valid integers")
 
-
-
     if n == 0:
         players[i] = HumanPlayer(i)
     if n == 1:
         players[i] = AIPlayer(i)
 
 # MAIN GAME LOOP
-passCount = 0 # Number of consecutive passes; quit when this reaches 4
+# Quit when passCount reaches four consecutive passes
+passCount = 0 
 while passCount != 4:
     if curr.canMove(curr.turn):
-        success = False # Whether an acceptable move has been made
+        # Repeat ask-for-move loop until valid move successfully acquired
+        success = False
         while not success:
-        # Get move in form of list of tuples - first is piece name, then coords
+            # Ask for move
             move = players[curr.turn].getMove(curr)
-            if len(move) != 2:       # Valid move is 2 items long; less than that is a pass
+            # A pass is an empty list and has len = 0; otherwise len = 2
+            if len(move) != 2: 
                 passCount = passCount + 1
                 success = True
-            elif moveCheck(move, curr.turn): # Otherwise check move and set
+            elif moveCheck(move, curr.turn):
                 # Set appropriate squares to player color
                 curr.colorSet(move[1], curr.turn)
 
@@ -179,14 +181,16 @@ while passCount != 4:
                 ydif = move_ymin - piece_ymin
                 piece.translate(xdif, ydif)
 
-                # Now piece.corners has actual corners!!! Update corner list
+                # Now piece.corners has correct corners, so update corner list
                 curr.updateCorners(curr.turn, piece.corners)
 
+                # Remove piece played from hand
                 del curr.getHand(curr.turn)[move[0]]
+                
                 success = True
                 passCount = 0
             else:
-                print("Invalid move!") # If moveCheck fails, prompt for another move
+                print("Invalid move!") 
     else:
         print("Player has no moves - passing")
         passCount = passCount + 1
