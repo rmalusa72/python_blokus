@@ -23,10 +23,14 @@ class HumanPlayer(Player):
         update.printBoard()
         print("Player" + str(self.color) + ", your hand contains:")
         update.printHand(self.color)
-        name = raw_input("Piece to play:")
+
+        name = raw_input("Type name of piece to play, or 'pass' to pass:")
+        if name == "pass":
+            return list()
         while not name in self.referenceHand:
             name = raw_input("Invalid name! Piece to play:")
         move = (name, np.zeros((2,self.referenceHand[name].size)))
+        
         for i in range(0,move[1][0].size):
             success = False
             while not success:
@@ -40,7 +44,6 @@ class HumanPlayer(Player):
                         print("Please enter only numbers between 0 and 19")
                 except ValueError as e:
                     print("Please enter valid integers")
-                
         return move
     
 class AIPlayer(Player):

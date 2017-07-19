@@ -130,7 +130,20 @@ players = dict()
 for i in range(1,5):
     print("Is player %d AI or human?" % i)
     print("(0 for human, 1 for AI)")
-    n = int(raw_input())
+    success = False
+
+    while not success:
+        try:
+            n = int(raw_input())
+            if n!=0 and n!= 1:
+                print("Please enter zero or one only")
+            else:
+                success = True
+        except ValueError as e:
+            print("Please enter valid integers")
+
+
+
     if n == 0:
         players[i] = HumanPlayer(i)
     if n == 1:
