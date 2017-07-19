@@ -120,101 +120,65 @@ class Gamestate:
 
         # Make sure piece does not conflict with anything already on
         # the board
-        conflict = moveConflicts(piece)
+        if not moveConflicts(piece):
+            return True
+        return False
 
     # Checks whether a move conflicts (overlaps or edge adacent with)
     # anything already on board
     def moveConflicts(self, p):
-        # IMPLEMENT THIS
-        return True
 
-            # Now knowing the piece is the right size, shape, & possessed by the player,
-        # check if the actual move is valid.
-
-        # This dict with string keys will have values that are either 2x1 arrays
-        # (for points to check, surrounding each tile in proposed move) or False
-        # (if the points are off the board or also in the proposed move)
+        color = self.turn
+        
+        # This dict with string keys will have values that are either
+        # 2x1 arrays (for points to check, surrounding each tile in proposed
+        # move) or False (if the points are off the board or also in the
+        # proposed move)
         nears = dict()
 
-        # whether we have found a successful diagonal connection
-        # NOTE: Change this to use corner list?
-        diagonal = False
-
-        # Now iterate through each tile in the proposed move
+        # Iterate through each tile in the proposed move
         for i in range(0, move[0].size):
 
             x = move[0,i]
             y = move[1,i]
 
-            # Reset coordinates (only update diagonals if we don't
-            # have one yet)
+            # If tile is already occupied, there is a conflict
+            if self.board[y,x] != 0:
+                return True
+
+            # Reset coordinates
             nears['e'] = False
             nears['s'] = False
             nears['w'] = False
             nears['n'] = False
 
-            if not diagonal: 
-                nears['ne'] = False
-                nears['nw'] = False
-                nears['se'] = False
-                nears['sw'] = False
-
-            # Now change 'nears' to appropriate coordinates where they exist
+            # Change 'nears' to appropriate coordinates where they exist
             if x < (boardsize - 1):
                 nears['e'] = np.array([[x+1],[y]])
-                if y > 0 and not diagonal:
-                    nears['ne'] = np.array([[x+1],[y-1]])
-                if y < (boardsize - 1) and not diagonal:
-                    nears['se'] = np.array([[x+1],[y+1]])
 
             if y < (boardsize - 1):
                 nears['s'] = np.array([[x],[y+1]])
 
             if x > 0:
                 nears['w'] = np.array([[x-1],[y]])
-                if y > 0 and not diagonal:
-                    nears['nw'] = np.array([[x-1],[y-1]])
-                if y < (boardsize-1) and not diagonal:
-                    nears['sw'] = np.array([[x-1], [y+1]])
 
             if y > 0:
                 nears['n'] = np.array([[x],[y-1]])
 
-            # Disregard coordinates that are in the set of tiles in the move itself
+            # Disregard coordinates that are in the move itself
             for dir, coord in nears.items():
                 if coord is not False:
                     for j in range(0, move[0].size):
                         if np.array_equal(coord,move[:,j].reshape(2,1)):
                             coord = False
 
-            # If any laterally adjacent tiles are player color, move is invalid
+            # If any laterally adjacent tiles are player color, move is invali
             for dir in ['e', 's', 'n', 'w']:
                 if nears[dir] is not False:
-                    if curr.board[nears[dir][1,0]][nears[dir][0,0]] == color: 
-                        return False
+                    if self.board[nears[dir][1,0]][nears[dir][0,0]] == color: 
+                        return True
 
-            # If any diagonally adjacent tiles are player color, set diagonal to true
-            for dir in ['ne','nw','se','sw']:
-                if nears[dir] is not False:
-                    if curr.board[nears[dir][1,0]][nears[dir][0,0]] == color:
-                        diagonal = True
-
-        # If this is the first piece the player places, they don't need a diagonal
-        # connection, but do need it to touch a corner
-        if len(self.getHand(color)) == 21:
-            if color == 1:
-                corner = np.array([[0],[0]])
-            if color == 2:
-                corner = np.array([[0],[boardsize-1]])
-            if color == 3:
-                corner = np.array([[boardsize-1],[boardsize-1]])
-            if color == 4:
-                corner = np.array([[boardsize-1],[0]])
-            for i in range(0, move[0].size):
-                if np.array_equal(corner, move[:,i].reshape(2,1)):
-                    diagonal = True
-
-        return diagonal
+        return False
         
     # Update turn to next player
     def advanceTurn(self):
