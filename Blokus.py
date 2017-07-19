@@ -6,8 +6,6 @@ from Players import *
 
 # Main file containing setup and main game loop 
 
-# MAIN GAME CODE STARTS HERE
-
 # Initialize current gamestate variable
 curr = Gamestate(20)
 referenceHand = initHand() # for checks, etc.
@@ -38,7 +36,7 @@ for i in range(1,5):
 # Quit when passCount reaches four consecutive passes
 passCount = 0 
 while passCount != 4:
-    if curr.canMove(curr.turn):
+    if len(curr.listMoves()) != 0:
         # Repeat ask-for-move loop until valid move successfully acquired
         success = False
         while not success:

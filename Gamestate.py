@@ -1,6 +1,7 @@
 from Pieces import *
 import sys
 import numpy as np
+import pdb
 
 # Initializes a beginning hand with one of each piece
 def initHand():
@@ -69,7 +70,7 @@ class Gamestate:
 
         name = move[0]
         color = self.turn
-
+        
         # If player doesn't have piece, move is illegal
         if not name in self.getHand(color):
             return False
@@ -89,10 +90,16 @@ class Gamestate:
         if not piece.isThisPiece(shape):
             return False
 
+        # Find extremes - if move goes off board, it is illegal
+        move_extremes = findExtremes(move)
+        move_xmin, move_xmax = move_extremes[0], move_extremes[1]
+        move_ymin, move_ymax = move_extremes[2], move_extremes[3]
+        if (move_xmin < 0 or move_xmax >= self.boardsize
+            or move_ymin < 0 or move_ymax >= self.boardsize):
+            return False
+        
         # Translate piece in hand to correct location, then check if
         # one of its corners matches an open corner on the board
-        move_extremes = findExtremes(move)
-        move_xmin, move_ymin = move_extremes[0], move_extremes[2]
         piece_extremes = findExtremes(piece.shape)
         piece_xmin, piece_ymin = piece_extremes[0], piece_extremes[2]
         xdif = move_xmin - piece_xmin
@@ -138,7 +145,7 @@ class Gamestate:
 
         # Iterate through each tile in the proposed move
         for i in range(0, p.size):
-
+            
             x = p.shape[0,i]
             y = p.shape[1,i]
 
@@ -208,7 +215,6 @@ class Gamestate:
             return self.gcorners
 
     # Given a 2x2n matrix of corners, update appropriate color's corner list
-    # TO IMPLEMENT: delete corners that point off the board
     def updateCorners(self, color, corners):
         oldList = self.getCorners(color)
         newCorners = corners[0].size / 2
@@ -225,7 +231,6 @@ class Gamestate:
                 continue
             if not obliterated:
                 oldList.append(cur)
-                    
 
     # Given a 2xn matrix of coordinates, set those to int color
     def colorSet(self, coords, color):
@@ -242,7 +247,6 @@ class Gamestate:
     def canMove(self, color):
         if len(self.getHand(color)) == 0:
             return False
-        # IMPLEMENT THIS
         return True
 
     # Returns list of possible moves for current player
@@ -258,34 +262,39 @@ class Gamestate:
 
         # For each piece, find list of moves for each orientation
         # with findPieceMoves
-        for p in hand:
-            rtn.append(findPieceMoves(p))
+        for (name, piece) in hand.items():
+            rtn.extend(self.findPieceMoves(name, piece))
 
-            if self.r90 and self.r180:
+            if piece.r90 and piece.r180:
                 for i in range(3):
-                    self.rotate(1)
-                    rtn.append(findPieceMoves(p))
-            elif self.r90 and not self.r180:
-                self.rotate(1)
-                rtn.append(findPieceMoves(p))
+                    piece.rotate(1)
+                    rtn.extend(self.findPieceMoves(name, piece))
+            elif piece.r90 and not piece.r180:
+                piece.rotate(1)
+                rtn.extend(self.findPieceMoves(name, piece))
                 
-            if self.chiral:
-                self.flipV()
-                rtn.append(findPieceMoves(p))
+            if piece.chiral:
+                piece.flipV()
+                rtn.extend(self.findPieceMoves(name, piece))
 
-                if self.r90 and self.r180:
+                if piece.r90 and piece.r180:
                     for i in range(3):
-                        self.rotate(1)
-                        rtn.append(findPieceMoves(p))
-                elif self.r90 and not self.r180:
-                    self.rotate(1)
-                    rtn.append(findPieceMoves(p))
+                        piece.rotate(1)
+                        rtn.extend(self.findPieceMoves(name, piece))
+                elif piece.r90 and not piece.r180:
+                    piece.rotate(1)
+                    rtn.extend(self.findPieceMoves(name, piece))
         return rtn
 
 
     # Find all moves for a given piece in a specific orientation
-    def findPieceMoves(self, p):
+    def findPieceMoves(self, name, p):
+
+        rtn = list()
         bcorners = self.getCorners(self.turn)
+        piece_extremes = findExtremes(p.shape)
+        piece_xmin, piece_ymin = piece_extremes[0], piece_extremes[2]
+        piece_xmax, piece_ymax = piece_extremes[1], piece_extremes[3]
         
         # For each corner pc on the piece...
         pcorners = p.corners
@@ -296,16 +305,28 @@ class Gamestate:
             # For each corner bc on the board...
             for bc in bcorners:
 
-                # Check if orientation of pc matches bc:
-                if ((pc[0,1] - pc[0,0]) == (bc[0,1] - bc[0,0]) and
-                    (pc[1,1] - pc[1,0]) == (bc[1,1] - bc[1,0])):
+                inv = np.array([[bc[0,1],bc[0,0]],[bc[1,1],bc[1,0]]])
+                
+                # Check if orientation of pc matches flipped bc:
+                if ((pc[0,1] - pc[0,0]) == (inv[0,1] - inv[0,0]) and
+                    (pc[1,1] - pc[1,0]) == (inv[1,1] - inv[1,0])):
 
                     # Move piece to matching location
-                    p.translate(bc[0,0] - pc[0,0], bc[1,0] - pc[1,0])
-
+                    xdif = inv[0,0] - pc[0,0]
+                    ydif = inv[1,0] - pc[1,0]
+                    p.translate(xdif, ydif)
+                    piece_xmin += xdif
+                    piece_ymin += ydif
+                    piece_xmax += xdif
+                    piece_ymax += ydif
+                    
                     # Now check if move is appropriate
-                    # IMPLEMENT THIS
+                    if not (piece_xmin < 0 or piece_xmax >= self.boardsize or
+                            piece_ymin < 0 or piece_ymax >= self.boardsize):
+                        if not self.moveConflicts(p):
+                            rtn.append((name, p.orientation, piece_xmin, piece_ymin))
 
+        return rtn
     
     # Print board
     def printBoard(self):
