@@ -180,36 +180,6 @@ class Piece:
                 boolshape = toBoolArray(self.shape)
                 if np.array_equal(boolshape, compare):
                     return True
-
-    # Takes a function and returns a list containing the results
-    # of that function on every distinct orientation of the piece
-    def allOrientations(self, f):      
-
-        rtn = list()
-        
-        boolshape = toBoolArray(self.shape)
-        rtn.append(f(self))
-
-        if self.r90 and self.r180:
-            for i in range(3):
-                self.rotate(1)
-                rtn.append(f(self))
-        elif self.r90 and not self.r180:
-            self.rotate(1)
-            rtn.append(f(self))
-        if self.chiral:
-            self.flipV()
-            rtn.append(f(self))
-
-            if self.r90 and self.r180:
-                for i in range(3):
-                    self.rotate(1)
-                    rtn.append(f(self))
-            elif self.r90 and not self.r180:
-                self.rotate(1)
-                rtn.append(f(self))
-
-        return rtn
                 
     def __repr__(self):
         return toBoolArray(self.shape).__repr__()

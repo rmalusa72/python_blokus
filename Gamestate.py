@@ -143,8 +143,27 @@ class Gamestate:
         # For each piece, find list of moves for each orientation
         # with findPieceMoves
         for p in hand:
-            rtn.extend(p.allOrientations(findPieceMoves))
+            rtn.append(findPieceMoves(p))
 
+            if self.r90 and self.r180:
+                for i in range(3):
+                    self.rotate(1)
+                    rtn.append(findPieceMoves(p))
+            elif self.r90 and not self.r180:
+                self.rotate(1)
+                rtn.append(findPieceMoves(p))
+                
+            if self.chiral:
+                self.flipV()
+                rtn.append(findPieceMoves(p))
+
+                if self.r90 and self.r180:
+                    for i in range(3):
+                        self.rotate(1)
+                        rtn.append(findPieceMoves(p))
+                elif self.r90 and not self.r180:
+                    self.rotate(1)
+                    rtn.append(findPieceMoves(p))
         return rtn
 
 
