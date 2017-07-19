@@ -93,7 +93,7 @@ class Gamestate:
         # one of its corners matches an open corner on the board
         move_extremes = findExtremes(move)
         move_xmin, move_ymin = move_extremes[0], move_extremes[2]
-        piece.extremes = findExtremes(piece.shape)
+        piece_extremes = findExtremes(piece.shape)
         piece_xmin, piece_ymin = piece_extremes[0], piece_extremes[2]
         xdif = move_xmin - piece_xmin
         ydif = move_ymin - piece_ymin
@@ -106,7 +106,7 @@ class Gamestate:
         pccount = pcorners[0].size / 2
         diagonal = False
         for i in range(0, pccount):
-            cur = corners[:,2*i:2*(i+1)]
+            cur = pcorners[:,2*i:2*(i+1)]
             inv = np.array([[cur[0,1],cur[0,0]],[cur[1,1],cur[1,0]]])
             for j in range(0, len(bcorners)):
                 if np.array_equal(bcorners[j],inv):
@@ -120,7 +120,7 @@ class Gamestate:
 
         # Make sure piece does not conflict with anything already on
         # the board
-        if not moveConflicts(piece):
+        if not self.moveConflicts(piece):
             return True
         return False
 
@@ -137,10 +137,10 @@ class Gamestate:
         nears = dict()
 
         # Iterate through each tile in the proposed move
-        for i in range(0, move[0].size):
+        for i in range(0, p.size):
 
-            x = move[0,i]
-            y = move[1,i]
+            x = p.shape[0,i]
+            y = p.shape[1,i]
 
             # If tile is already occupied, there is a conflict
             if self.board[y,x] != 0:
@@ -153,10 +153,10 @@ class Gamestate:
             nears['n'] = False
 
             # Change 'nears' to appropriate coordinates where they exist
-            if x < (boardsize - 1):
+            if x < (self.boardsize - 1):
                 nears['e'] = np.array([[x+1],[y]])
 
-            if y < (boardsize - 1):
+            if y < (self.boardsize - 1):
                 nears['s'] = np.array([[x],[y+1]])
 
             if x > 0:
@@ -168,8 +168,8 @@ class Gamestate:
             # Disregard coordinates that are in the move itself
             for dir, coord in nears.items():
                 if coord is not False:
-                    for j in range(0, move[0].size):
-                        if np.array_equal(coord,move[:,j].reshape(2,1)):
+                    for j in range(0, p.size):
+                        if np.array_equal(coord,p.shape[:,j].reshape(2,1)):
                             coord = False
 
             # If any laterally adjacent tiles are player color, move is invali

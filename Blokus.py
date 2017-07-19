@@ -48,7 +48,7 @@ while passCount != 4:
             if len(move) != 2: 
                 passCount = passCount + 1
                 success = True
-            elif curr.moveCheck(move, curr.turn):
+            elif curr.moveCheck(move):
                 # Set appropriate squares to player color
                 curr.colorSet(move[1], curr.turn)
 
