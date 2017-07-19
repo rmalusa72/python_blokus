@@ -64,6 +64,12 @@ class Gamestate:
         self.boardsize = boardsize
         self.turn = 1
 
+    # Update turn to next player
+    def advanceTurn(self):
+        self.turn = self.turn + 1
+        if self.turn == 5:
+            self.turn = 1
+
     # Returns the hand corresponding to int color    
     def getHand(self, color):
         if color == 1:
@@ -122,6 +128,10 @@ class Gamestate:
         # IMPLEMENT THIS
         return True
 
+    # Returns list of possible moves
+    # def listMoves(self):
+        # implement
+    
     # Print board
     def printBoard(self):
         print self.board
@@ -132,7 +142,7 @@ class Gamestate:
         for name, piece in hand.items():
             sys.stdout.write(name + ' ')
         sys.stdout.write("\n")
-
+    
     # Copy this gamestate
     #def copy(self):
         # IMPLEMENT THIS

@@ -139,47 +139,44 @@ for i in range(1,5):
 # MAIN GAME LOOP
 passCount = 0 # Number of consecutive passes; quit when this reaches 4
 while passCount != 4:
-    for i in range(1,5):
-        if curr.canMove(i):
-            success = False # Whether an acceptable move has been made
-            while not success:
-            # Get move in form of list of tuples - first is piece name, then coords
-                move = players[i].getMove(curr)
-                if len(move) != 2:       # Valid move is 2 items long; less than that is a pass
-                    passCount = passCount + 1
-                    success = True
-                elif moveCheck(move, i): # Otherwise check move and set
-                    # Set appropriate squares to player color
-                    curr.colorSet(move[1], i)
+    if curr.canMove(curr.turn):
+        success = False # Whether an acceptable move has been made
+        while not success:
+        # Get move in form of list of tuples - first is piece name, then coords
+            move = players[curr.turn].getMove(curr)
+            if len(move) != 2:       # Valid move is 2 items long; less than that is a pass
+                passCount = passCount + 1
+                success = True
+            elif moveCheck(move, curr.turn): # Otherwise check move and set
+                # Set appropriate squares to player color
+                curr.colorSet(move[1], curr.turn)
 
-                    # Get appropriate piece from hand 
-                    piece = curr.getHand(i)[move[0]]
+                # Get appropriate piece from hand 
+                piece = curr.getHand(curr.turn)[move[0]]
 
-                    # Find min x, min y from move coords and move
-                    # piece to match move's location (movecheck set right orientation)
-                    # NOTE: getting min x, min y this many times is inefficient!
-                    # fix later
-                    move_extremes = findExtremes(move[1])
-                    move_xmin, move_ymin = move_extremes[0], move_extremes[2]
-                    piece_extremes = findExtremes(piece.shape)
-                    piece_xmin, piece_ymin = piece_extremes[0],piece_extremes[2]
-                    xdif = move_xmin - piece_xmin
-                    ydif = move_ymin - piece_ymin
-                    piece.translate(xdif, ydif)
-                    
-                    # Now piece.corners has actual corners!!! Update corner list
-                    curr.updateCorners(i, piece.corners)
-                    for j in range(0, len(curr.getCorners(i))):
-                        print(curr.getCorners(i)[j])
-                    
-                    del curr.getHand(i)[move[0]]
-                    success = True
-                    passCount = 0
-                else:
-                    print("Invalid move!") # If moveCheck fails, prompt for another move
-        else:
-            print("Player has no moves - passing")
-            passCount = passCount + 1
+                # Find min x, min y from move coords and move
+                # piece to match move's location (movecheck set right orientation)
+                # NOTE: getting min x, min y this many times is inefficient!
+                # fix later
+                move_extremes = findExtremes(move[1])
+                move_xmin, move_ymin = move_extremes[0], move_extremes[2]
+                piece_extremes = findExtremes(piece.shape)
+                piece_xmin, piece_ymin = piece_extremes[0],piece_extremes[2]
+                xdif = move_xmin - piece_xmin
+                ydif = move_ymin - piece_ymin
+                piece.translate(xdif, ydif)
 
+                # Now piece.corners has actual corners!!! Update corner list
+                curr.updateCorners(curr.turn, piece.corners)
 
+                del curr.getHand(curr.turn)[move[0]]
+                success = True
+                passCount = 0
+            else:
+                print("Invalid move!") # If moveCheck fails, prompt for another move
+    else:
+        print("Player has no moves - passing")
+        passCount = passCount + 1
+
+    curr.advanceTurn()
 
