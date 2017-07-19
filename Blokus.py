@@ -36,7 +36,9 @@ for i in range(1,5):
 # Quit when passCount reaches four consecutive passes
 passCount = 0 
 while passCount != 4:
-    if len(curr.listMoves()) != 0:
+    movelist = curr.listMoves()
+    print(movelist)
+    if len(movelist) != 0:
         # Repeat ask-for-move loop until valid move successfully acquired
         success = False
         while not success:

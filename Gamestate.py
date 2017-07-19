@@ -92,6 +92,8 @@ class Gamestate:
         
         # Translate piece in hand to correct location, then check if
         # one of its corners matches an open corner on the board
+        move_extremes = findExtremes(move)
+        move_xmin, move_ymin = move_extremes[0], move_extremes[2]
         piece_extremes = findExtremes(piece.shape)
         piece_xmin, piece_ymin = piece_extremes[0], piece_extremes[2]
         xdif = move_xmin - piece_xmin
