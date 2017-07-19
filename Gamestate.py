@@ -64,7 +64,7 @@ class Gamestate:
         self.boardsize = boardsize
         self.turn = 1
 
-    # Returns whether a move (as (name, coord array) tuple) is legal
+    # Returns whether a move (as name, coord array) tuple) is legal
     def moveCheck(self, move):
 
         name = move[0]
@@ -73,22 +73,62 @@ class Gamestate:
         # If player doesn't have piece, move is illegal
         if not name in self.getHand(color):
             return False
+        piece = self.getHand(color)[name]
 
-        # Reassign move to array of coordinates
+        # Move now refers to array of coordinates
         move = move[1]
 
         # If the # of coords is not the same as the size of the piece, move is illegal
-        if not move[0].size == self.getHand(color)[name].size:
+        if not move[0].size == piece.size:
             return False
 
         # Convert coords to boolean array w/correct shape, check against piece shape
         # If no match, move is illegal. isThisPiece also moves appropriate piece in
         # player's hand into orientation matching proposed move
         shape = toBoolArray(move)
-        if not self.getHand(color)[name].isThisPiece(shape):
+        if not piece.isThisPiece(shape):
             return False
 
-        # Now knowing the piece is the right size, shape, & possessed by the player,
+        # Translate piece in hand to correct location, then check if
+        # one of its corners matches an open corner on the board
+        move_extremes = findExtremes(move)
+        move_xmin, move_ymin = move_extremes[0], move_extremes[2]
+        piece.extremes = findExtremes(piece.shape)
+        piece_xmin, piece_ymin = piece_extremes[0], piece_extremes[2]
+        xdif = move_xmin - piece_xmin
+        ydif = move_ymin - piece_ymin
+        piece.translate(xdif, ydif)
+
+        # NOTE: make function to break 2x2n corners array into list of individual
+        # corners, I do it several times
+        bcorners = self.getCorners(color)
+        pcorners = piece.corners
+        pccount = pcorners[0].size / 2
+        diagonal = False
+        for i in range(0, pccount):
+            cur = corners[:,2*i:2*(i+1)]
+            inv = np.array([[cur[0,1],cur[0,0]],[cur[1,1],cur[1,0]]])
+            for j in range(0, len(bcorners)):
+                if np.array_equal(bcorners[j],inv):
+                    diagonal = True
+                    break
+            if diagonal:
+                break
+
+        if not diagonal:
+            return False
+
+        # Make sure piece does not conflict with anything already on
+        # the board
+        conflict = moveConflicts(piece)
+
+    # Checks whether a move conflicts (overlaps or edge adacent with)
+    # anything already on board
+    def moveConflicts(self, p):
+        # IMPLEMENT THIS
+        return True
+
+            # Now knowing the piece is the right size, shape, & possessed by the player,
         # check if the actual move is valid.
 
         # This dict with string keys will have values that are either 2x1 arrays
@@ -175,12 +215,6 @@ class Gamestate:
                     diagonal = True
 
         return diagonal
-
-    # Checks whether a move (as a piece translated to a specific location)
-    # is valid. Used when We already know it touches a corner and is a piece
-    # in hand, so check only for adjacencies/overlaps
-    # def moveConflicts(self, p):
-        
         
     # Update turn to next player
     def advanceTurn(self):

@@ -52,22 +52,11 @@ while passCount != 4:
                 # Set appropriate squares to player color
                 curr.colorSet(move[1], curr.turn)
 
-                # Get appropriate piece from hand 
+                # Get appropriate piece from hand;
+                # moveCheck has given it correct orientation & location
                 piece = curr.getHand(curr.turn)[move[0]]
 
-                # Find min x, min y from move coords and move
-                # piece to match move's location (movecheck set right orientation)
-                # NOTE: getting min x, min y this many times is inefficient!
-                # fix later
-                move_extremes = findExtremes(move[1])
-                move_xmin, move_ymin = move_extremes[0], move_extremes[2]
-                piece_extremes = findExtremes(piece.shape)
-                piece_xmin, piece_ymin = piece_extremes[0],piece_extremes[2]
-                xdif = move_xmin - piece_xmin
-                ydif = move_ymin - piece_ymin
-                piece.translate(xdif, ydif)
-
-                # Now piece.corners has correct corners, so update corner list
+                # Update corner list
                 curr.updateCorners(curr.turn, piece.corners)
 
                 # Remove piece played from hand
