@@ -121,6 +121,7 @@ class Gamestate:
             self.board[coords[1,i]][coords[0,i]] = color
         return True
 
+    # NOTE: redundant?
     # Returns true if player color can move, false otherwise
     def canMove(self, color):
         if len(self.getHand(color)) == 0:
@@ -128,9 +129,42 @@ class Gamestate:
         # IMPLEMENT THIS
         return True
 
-    # Returns list of possible moves
-    # def listMoves(self):
-        # implement
+    # Returns list of possible moves for current player
+    def listMoves(self):
+        rtn = list()
+
+        hand = self.getHand(self.turn)
+        corners = self.getCorners(self.turn)
+
+        # If no corners or no pieces in hand, no moves are possible
+        if len(hand) == 0 or len(corners) == 0:
+            return rtn
+
+        # For each piece, find list of moves for each orientation
+        # with findPieceMoves
+        for p in hand:
+            rtn.extend(p.allOrientations(findPieceMoves))
+
+        return rtn
+
+
+    # Find all moves for a given piece in a specific orientation
+    def findPieceMoves(self, p):
+        corners = self.getCorners(self.turn)
+        
+        # For each corner on that permutation...
+        pcorners = p.corners
+        pclen = pcorners[0].size / 2
+        for i in range(0, pclen):
+            pc = pcorners[:,2*i:2*(i+1)]
+
+            # For each corner on the board...
+            for c in corners:
+                # check if pc matches c
+                # if yes, check if putting piece there is a valid move
+                # if yes, add move to list
+                # NOTE: this is filler so c doesn't yell at me about indentation
+                x = 0
     
     # Print board
     def printBoard(self):
