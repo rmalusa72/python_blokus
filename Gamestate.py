@@ -89,14 +89,6 @@ class Gamestate:
         shape = toBoolArray(move)
         if not piece.isThisPiece(shape):
             return False
-
-        # Find extremes - if move goes off board, it is illegal
-        move_extremes = findExtremes(move)
-        move_xmin, move_xmax = move_extremes[0], move_extremes[1]
-        move_ymin, move_ymax = move_extremes[2], move_extremes[3]
-        if (move_xmin < 0 or move_xmax >= self.boardsize
-            or move_ymin < 0 or move_ymax >= self.boardsize):
-            return False
         
         # Translate piece in hand to correct location, then check if
         # one of its corners matches an open corner on the board
@@ -148,6 +140,10 @@ class Gamestate:
             
             x = p.shape[0,i]
             y = p.shape[1,i]
+
+            # If point is off board, conflict
+            if x < 0 or y < 0 or x >= self.boardsize or y >= self.boardsize:
+                return True
 
             # If tile is already occupied, there is a conflict
             if self.board[y,x] != 0:
@@ -294,7 +290,6 @@ class Gamestate:
         bcorners = self.getCorners(self.turn)
         piece_extremes = findExtremes(p.shape)
         piece_xmin, piece_ymin = piece_extremes[0], piece_extremes[2]
-        piece_xmax, piece_ymax = piece_extremes[1], piece_extremes[3]
         
         # For each corner pc on the piece...
         pcorners = p.corners
@@ -317,14 +312,10 @@ class Gamestate:
                     p.translate(xdif, ydif)
                     piece_xmin += xdif
                     piece_ymin += ydif
-                    piece_xmax += xdif
-                    piece_ymax += ydif
                     
                     # Now check if move is appropriate
-                    if not (piece_xmin < 0 or piece_xmax >= self.boardsize or
-                            piece_ymin < 0 or piece_ymax >= self.boardsize):
-                        if not self.moveConflicts(p):
-                            rtn.append((name, p.orientation, piece_xmin, piece_ymin))
+                    if not self.moveConflicts(p):
+                        rtn.append((name, p.orientation, piece_xmin, piece_ymin))
 
         return rtn
     
