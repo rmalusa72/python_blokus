@@ -45,8 +45,8 @@ while passCount != 4:
         while not success:
             # Ask for move
             move = players[curr.turn].getMove(curr)
-            # A pass is an empty list and has len = 0; otherwise len = 2
-            if len(move) != 2: 
+            # A pass is an empty list and has len = 0; otherwise len = 4
+            if len(move) != 4: 
                 passCount = passCount + 1
                 success = True
             elif curr.moveCheck(move):

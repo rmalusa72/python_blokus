@@ -68,7 +68,7 @@ class Gamestate:
         self.boardsize = boardsize
         self.turn = 1
 
-    # Returns whether a move (as name, coord array) tuple) is legal
+    # Returns whether a move ((name, orientation, xmin, ymin) tuple) is legal
     def moveCheck(self, move):
 
         name = move[0]
@@ -79,30 +79,19 @@ class Gamestate:
             return False
         piece = self.getHand(color)[name]
 
-        # Move now refers to array of coordinates
-        move = move[1]
+        # Set piece to correct orientation and location
+        orientation = move[1]
+        piece.setOrientation(orientation)
 
-        # If the # of coords is not the same as the size of the piece, move is illegal
-        if not move[0].size == piece.size:
-            return False
-
-        # Convert coords to boolean array w/correct shape, check against piece shape
-        # If no match, move is illegal. isThisPiece also moves appropriate piece in
-        # player's hand into orientation matching proposed move
-        shape = toBoolArray(move)
-        if not piece.isThisPiece(shape):
-            return False
-        
-        # Translate piece in hand to correct location, then check if
-        # one of its corners matches an open corner on the board
-        move_extremes = findExtremes(move)
-        move_xmin, move_ymin = move_extremes[0], move_extremes[2]
+        move_xmin = move[2]
+        move_ymin = move[3]
         piece_extremes = findExtremes(piece.shape)
         piece_xmin, piece_ymin = piece_extremes[0], piece_extremes[2]
         xdif = move_xmin - piece_xmin
         ydif = move_ymin - piece_ymin
         piece.translate(xdif, ydif)
-
+        
+        # Check if one of piece's corners matches an open corner on the board
         # NOTE: make function to break 2x2n corners array into list of individual
         # corners, I do it several times
         bcorners = self.getCorners(color)
@@ -249,7 +238,7 @@ class Gamestate:
                 oldList.append(cur)
 
     # Given a 2xn matrix of coordinates, set those to int color
-    def colorSet(self, coords, color):
+    def colorSet(self, move, color):
         if not (color in range(1,5)):
             return False
         for i in range(coords[0].size):

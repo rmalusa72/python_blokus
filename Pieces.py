@@ -10,6 +10,7 @@
 # Transformation matrices are 2x2 matrices where Ax = T(x)
 
 import numpy as np
+import pdb
 
 # Finds the minimum and maximum x and y in a 2xn array of points
 def findExtremes(points):
@@ -154,43 +155,47 @@ class Piece:
         while self.orientation != new_orientation:
             self.rotate(1)
 
-    # checks if a given 2d array of bools matches any permutation of this piece
-    def isThisPiece(self, compare):
-        
+    # checks if a given 2xn array of coordinates  matches any permutation of this piece
+    # Returns orientation that matches, or -1 if no match
+    def matchingOrientation(self, compare):
+
+        compare = toBoolArray(compare)
         boolshape = toBoolArray(self.shape)
         if np.array_equal(boolshape, compare):
-            return True
+            return self.orientation
 
         if self.r90 and self.r180:
             for i in range(3):
                 self.rotate(1)
                 boolshape = toBoolArray(self.shape)
                 if np.array_equal(boolshape, compare):
-                    return True
+                    return self.orientation
         elif self.r90 and not self.r180:
             self.rotate(1)
             boolshape = toBoolArray(self.shape)
             if np.array_equal(boolshape, compare):
-                return True
+                return self.orientation
 
         if self.chiral:
             self.flipV()
 
             boolshape = toBoolArray(self.shape)
             if np.array_equal(boolshape, compare):
-                return True
+                return self.orientation
 
             if self.r90 and self.r180:
                 for i in range(3):
                     self.rotate(1)
                     boolshape = toBoolArray(self.shape)
                     if np.array_equal(boolshape, compare):
-                        return True
+                        return self.orientation
             elif self.r90 and not self.r180:
                 self.rotate(1)
                 boolshape = toBoolArray(self.shape)
                 if np.array_equal(boolshape, compare):
-                    return True
+                    return self.orientation
+                
+        return -1
                 
     def __repr__(self):
         return toBoolArray(self.shape).__repr__()
