@@ -46,23 +46,12 @@ while passCount != 4:
             # Ask for move
             move = players[curr.turn].getMove(curr)
             # A pass is an empty list and has len = 0; otherwise len = 4
-            if len(move) != 4: 
-                passCount = passCount + 1
+            if len(move) != 4:
+                print("Passing!")
+                curr.update(move)
                 success = True
-            elif curr.moveCheck(move):
-                # Set appropriate squares to player color
-                curr.colorSet(move[1], curr.turn)
-
-                # Get appropriate piece from hand;
-                # moveCheck has given it correct orientation & location
-                piece = curr.getHand(curr.turn)[move[0]]
-
-                # Update corner list
-                curr.updateCorners(curr.turn, piece.corners)
-
-                # Remove piece played from hand
-                del curr.getHand(curr.turn)[move[0]]
-                
+                passCount = passCount + 1
+            elif curr.update(move) != False:
                 success = True
                 passCount = 0
             else:
@@ -70,6 +59,4 @@ while passCount != 4:
     else:
         print("Player has no moves - passing")
         passCount = passCount + 1
-
-    curr.advanceTurn()
 

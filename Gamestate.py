@@ -68,9 +68,15 @@ class Gamestate:
         self.boardsize = boardsize
         self.turn = 1
 
-    # Returns whether a move ((name, orientation, xmin, ymin) tuple) is legal
-    def moveCheck(self, move):
 
+    # Updates gamestate with provided move if it is legal,
+    # or else returns False
+    def update(self, move):
+
+        if len(move) != 4: # Then move is a pass
+            self.advanceTurn()
+            return
+        
         name = move[0]
         color = self.turn
         
@@ -90,11 +96,31 @@ class Gamestate:
         xdif = move_xmin - piece_xmin
         ydif = move_ymin - piece_ymin
         piece.translate(xdif, ydif)
+
+        # Check if move is legal
+        if not self.moveCheck(piece):
+            return False
+
+        # Set appropriate squares to player color
+        self.colorSet(piece.shape, self.turn)
+
+        # Update corner list
+        self.updateCorners(self.turn, piece.corners)
+
+        # Remove piece played from hand
+        del self.getHand(self.turn)[name]
+
+        # Advance turn
+        self.advanceTurn()
+    
+        
+    # Returns whether a move (as oriented and located piece) is valid
+    def moveCheck(self, piece):
         
         # Check if one of piece's corners matches an open corner on the board
         # NOTE: make function to break 2x2n corners array into list of individual
         # corners, I do it several times
-        bcorners = self.getCorners(color)
+        bcorners = self.getCorners(self.turn)
         pcorners = piece.corners
         pccount = pcorners[0].size / 2
         diagonal = False
@@ -117,7 +143,7 @@ class Gamestate:
             return True
         return False
 
-    # Checks whether a move conflicts (overlaps or edge adacent with)
+    # Checks whether a piece conflicts (overlaps or edge adacent with)
     # anything already on board
     def moveConflicts(self, p):
 
@@ -169,7 +195,7 @@ class Gamestate:
                         if np.array_equal(coord,p.shape[:,j].reshape(2,1)):
                             coord = False
 
-            # If any laterally adjacent tiles are player color, move is invali
+            # If any laterally adjacent tiles are player color, move is invalid
             for dir in ['e', 's', 'n', 'w']:
                 if nears[dir] is not False:
                     if self.board[nears[dir][1,0]][nears[dir][0,0]] == color: 
@@ -238,7 +264,7 @@ class Gamestate:
                 oldList.append(cur)
 
     # Given a 2xn matrix of coordinates, set those to int color
-    def colorSet(self, move, color):
+    def colorSet(self, coords, color):
         if not (color in range(1,5)):
             return False
         for i in range(coords[0].size):
