@@ -31,14 +31,17 @@ for i in range(1,5):
     if n == 0:
         players[i] = HumanPlayer(i)
     if n == 1:
-        players[i] = AIPlayer(i)
+        players[i] = veryStupidAIPlayer(i)
 
 # MAIN GAME LOOP
 # Quit when passCount reaches four consecutive passes
 passCount = 0 
 while passCount != 4:
-    movelist = curr.listMoves()
-    print(movelist)
+
+    curr.printBoard()
+    
+    movelist = curr.listMoves() # NOTE: Make canMove that stops at first move it finds?
+    #print(movelist)
     if len(movelist) != 0:
         # Repeat ask-for-move loop until valid move successfully acquired
         success = False
@@ -60,3 +63,4 @@ while passCount != 4:
         print("Player has no moves - passing")
         passCount = passCount + 1
 
+curr.printScores()

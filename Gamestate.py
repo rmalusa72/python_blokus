@@ -346,6 +346,24 @@ class Gamestate:
                         rtn.append((p.name, p.orientation, piece_xmin, piece_ymin))
 
         return rtn
+
+    # Print current scores
+    def printScores(self):
+        scores = [0,0,0,0]
+        for i in range(1, 5):
+            hand = self.getHand(i)
+            for name, piece in hand.items():
+                scores[i-1] = scores[i-1] - piece.size
+
+        print("Final scores:")
+        print("Blue:")
+        print scores[0]
+        print("Yellow:")
+        print scores[1]
+        print("Red:")
+        print scores[2]
+        print("Green:")
+        print scores[3]
     
     # Print board
     def printBoard(self):

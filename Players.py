@@ -25,7 +25,6 @@ class HumanPlayer(Player):
     def getMove(self, update):
 
         # Print information to player
-        update.printBoard()
         print("Player" + str(self.color) + ", your hand contains:")
         update.printSortedHand(self.color)
 
@@ -76,3 +75,8 @@ class AIPlayer(Player):
     def getMove(self, update):
         #IMPLEMENT THIS
         return list()
+
+class veryStupidAIPlayer(Player):
+    def getMove(self, update):
+        moves = update.listMoves()
+        return moves[0]
