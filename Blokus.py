@@ -55,5 +55,6 @@ while not curr.isTerminal():
                 print("Invalid move!") 
     else:
         print("Player has no moves - passing")
+        curr.update(list())
 
 curr.printScores()

@@ -49,6 +49,14 @@ def toBoolArray(points):
 
     return shape
 
+# Given a 2x2n array containing n corners, returns a list containing n 2x2 arrays
+def splitCornerArray(corners):
+    rtn = list()
+    numCorners = corners[0].size/2
+    for i in range(0, numCorners):
+        rtn.append(corners[:,2*i:2*(i+1)])
+    return rtn
+
 class Piece:
     '''Generic piece type extended by specific pieces'''
 

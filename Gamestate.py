@@ -132,10 +132,8 @@ class Gamestate:
         # corners, I do it several times
         bcorners = self.getCorners(self.turn)
         pcorners = piece.corners
-        pccount = pcorners[0].size / 2
         diagonal = False
-        for i in range(0, pccount):
-            cur = pcorners[:,2*i:2*(i+1)]
+        for cur in splitCornerArray(pcorners):
             inv = np.array([[cur[0,1],cur[0,0]],[cur[1,1],cur[1,0]]])
             for j in range(0, len(bcorners)):
                 if np.array_equal(bcorners[j],inv):
@@ -258,9 +256,7 @@ class Gamestate:
     # Given a 2x2n matrix of corners, update appropriate color's corner list
     def updateCorners(self, color, corners):
         oldList = self.getCorners(color)
-        newCorners = corners[0].size / 2
-        for i in range(0, newCorners):
-            cur = corners[:,2*i:2*(i+1)]
+        for cur in splitCornerArray(corners):
             inv = np.array([[cur[0,1],cur[0,0]],[cur[1,1],cur[1,0]]])
             obliterated = False
             for j in range(0, len(oldList)):
@@ -331,9 +327,7 @@ class Gamestate:
         
         # For each corner pc on the piece...
         pcorners = p.corners
-        pclen = pcorners[0].size / 2
-        for i in range(0, pclen):
-            pc = pcorners[:,2*i:2*(i+1)]
+        for pc in splitCornerArray(pcorners):
 
             # For each corner bc on the board...
             for bc in bcorners:
@@ -409,9 +403,7 @@ class Gamestate:
         
         # For each corner pc on the piece...
         pcorners = p.corners
-        pclen = pcorners[0].size / 2
-        for i in range(0, pclen):
-            pc = pcorners[:,2*i:2*(i+1)]
+        for pc in splitCornerArray(pcorners):
 
             # For each corner bc on the board...
             for bc in bcorners:
