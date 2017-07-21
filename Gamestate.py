@@ -347,6 +347,85 @@ class Gamestate:
 
         return rtn
 
+
+    # Like listMoves, but returns true as soon as it finds a single move
+    def canMove(self):
+        hand = self.getHand(self.turn)
+        corners = self.getCorners(self.turn)
+
+        # If no corners or no pieces in hand, no moves are possible
+        if len(hand) == 0 or len(corners) == 0:
+            return False
+
+        # For each piece, find list of moves for each orientation
+        # with findPieceMoves
+        sortedHand = self.sortedHand(self.turn)
+        for piece in sortedHand:
+            if self.canFindPieceMoves(piece):
+                return True
+
+            if piece.r90 and piece.r180:
+                for i in range(3):
+                    piece.rotate(1)
+                    if self.canFindPieceMoves(piece):
+                        return True                    
+            elif piece.r90 and not piece.r180:
+                piece.rotate(1)
+                if self.canFindPieceMoves(piece):
+                    return True
+                
+            if piece.chiral:
+                piece.flipV()
+                if self.canFindPieceMoves(piece):
+                    return True
+                if piece.r90 and piece.r180:
+                    for i in range(3):
+                        piece.rotate(1)
+                        if self.canFindPieceMoves(piece):
+                            return True
+                elif piece.r90 and not piece.r180:
+                    piece.rotate(1)
+                    if self.canFindPieceMoves(piece):
+                        return True
+        return False
+
+    # canMove's equivalent of findPieceMoves (returns True as soon as it
+    # finds a single move)
+    def canFindPieceMoves(self, p):
+
+        bcorners = self.getCorners(self.turn)
+        piece_extremes = findExtremes(p.shape)
+        piece_xmin, piece_ymin = piece_extremes[0], piece_extremes[2]
+        
+        # For each corner pc on the piece...
+        pcorners = p.corners
+        pclen = pcorners[0].size / 2
+        for i in range(0, pclen):
+            pc = pcorners[:,2*i:2*(i+1)]
+
+            # For each corner bc on the board...
+            for bc in bcorners:
+
+                inv = np.array([[bc[0,1],bc[0,0]],[bc[1,1],bc[1,0]]])
+                
+                # Check if orientation of pc matches flipped bc:
+                if ((pc[0,1] - pc[0,0]) == (inv[0,1] - inv[0,0]) and
+                    (pc[1,1] - pc[1,0]) == (inv[1,1] - inv[1,0])):
+
+                    # Move piece to matching location
+                    xdif = inv[0,0] - pc[0,0]
+                    ydif = inv[1,0] - pc[1,0]
+                    p.translate(xdif, ydif)
+                    piece_xmin += xdif
+                    piece_ymin += ydif
+                    
+                    # Now check if move is appropriate
+                    if not self.moveConflicts(p):
+                        return True
+
+        return False
+    
+    
     # Print current scores
     def printScores(self):
         scores = [0,0,0,0]

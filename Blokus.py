@@ -39,10 +39,7 @@ passCount = 0
 while passCount != 4:
 
     curr.printBoard()
-    
-    movelist = curr.listMoves() # NOTE: Make canMove that stops at first move it finds?
-    #print(movelist)
-    if len(movelist) != 0:
+    if curr.canMove():
         # Repeat ask-for-move loop until valid move successfully acquired
         success = False
         while not success:
