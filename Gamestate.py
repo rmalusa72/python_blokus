@@ -54,6 +54,11 @@ def initBoard(boardSize):
 class Gamestate:
     '''Represents a game state in Blokus, with hands and board'''
 
+    # NOTE: Change things to use single reference hand instead of each gamestate
+    # having four, that is gonna be inefficient when going thru the probability
+    # space
+    referenceHand = initHand()
+    
     # Makes a beginning game state
     def __init__(self, boardsize):
         self.blue = initHand()
@@ -67,6 +72,7 @@ class Gamestate:
         self.board = initBoard(boardsize)
         self.boardsize = boardsize
         self.turn = 1
+        self.passCount = 0
 
 
     # Updates gamestate with provided move if it is legal,
@@ -74,6 +80,7 @@ class Gamestate:
     def update(self, move):
 
         if len(move) != 4: # Then move is a pass
+            self.passCount = self.passCount + 1
             self.advanceTurn()
             return
         
@@ -110,6 +117,9 @@ class Gamestate:
         # Remove piece played from hand
         del self.getHand(self.turn)[name]
 
+        # Reset pass count
+        self.passCount = 0
+        
         # Advance turn
         self.advanceTurn()
     
@@ -424,7 +434,13 @@ class Gamestate:
                         return True
 
         return False
-    
+
+    # Returns true if gamestate is terminal (four consecutive passes), otherwise
+    # returns false
+    def isTerminal(self):
+        if self.passCount >= 4:
+            return True
+        return False
     
     # Print current scores
     def printScores(self):

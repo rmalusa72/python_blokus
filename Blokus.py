@@ -34,9 +34,8 @@ for i in range(1,5):
         players[i] = veryStupidAIPlayer(i)
 
 # MAIN GAME LOOP
-# Quit when passCount reaches four consecutive passes
-passCount = 0 
-while passCount != 4:
+# Quit when curr is terminal (aka four consecutive passes have occurred)
+while not curr.isTerminal():
 
     curr.printBoard()
     if curr.canMove():
@@ -50,14 +49,11 @@ while passCount != 4:
                 print("Passing!")
                 curr.update(move)
                 success = True
-                passCount = passCount + 1
             elif curr.update(move) != False:
                 success = True
-                passCount = 0
             else:
                 print("Invalid move!") 
     else:
         print("Player has no moves - passing")
-        passCount = passCount + 1
 
 curr.printScores()
