@@ -19,7 +19,7 @@ class HumanPlayer(Player):
 
     def __init__(self, color):
         self.color = color
-        self.referenceHand = initHand()
+        self.referenceHand = initRefHand()
 
     # When provided an updated gamestate, prompt player for their move
     def getMove(self, update):
@@ -39,7 +39,7 @@ class HumanPlayer(Player):
             name = raw_input("Type name of piece to play, or 'pass' to pass:")
             if name == "pass":
                 return list()
-            while not name in currHand:
+            while not currHand[name]:
                 name = raw_input("You don't have that piece! Piece to play:")
             coords = np.zeros((2,self.referenceHand[name].size), dtype = int)
 

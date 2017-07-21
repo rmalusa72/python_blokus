@@ -7,7 +7,7 @@ import sys
 import numpy as np
 
 # Initializes a beginning hand with one of each piece
-def initHand():
+def initRefHand():
     rtn = dict()
     rtn['One'] = One()
     rtn['Two'] = Two()
@@ -30,6 +30,31 @@ def initHand():
     rtn['X'] = X()
     rtn['Y'] = Y()
     rtn['Z'] = Z()
+    return rtn
+
+def initHand():
+    rtn = dict()
+    rtn['One'] = True
+    rtn['Two'] = True
+    rtn['I3'] = True
+    rtn['V3'] = True
+    rtn['I4'] = True
+    rtn['L4'] = True
+    rtn['N4'] = True
+    rtn['O'] = True
+    rtn['T4'] = True
+    rtn['F'] = True
+    rtn['I'] = True
+    rtn['L'] = True
+    rtn['N'] = True
+    rtn['P'] = True
+    rtn['T'] = True
+    rtn['U'] = True
+    rtn['V'] = True
+    rtn['W'] = True
+    rtn['X'] = True
+    rtn['Y'] = True
+    rtn['Z'] = True
     return rtn
 
 # Initializes a list with the starting corner for a given player
@@ -57,7 +82,7 @@ class Gamestate:
     # NOTE: Change things to use single reference hand instead of each gamestate
     # having four, that is gonna be inefficient when going thru the probability
     # space
-    referenceHand = initHand()
+    referenceHand = initRefHand()
     
     # Makes a beginning game state
     def __init__(self, boardsize):
@@ -88,9 +113,9 @@ class Gamestate:
         color = self.turn
         
         # If player doesn't have piece, move is illegal
-        if not name in self.getHand(color):
+        if not self.getHand(color)[name]:
             return False
-        piece = self.getHand(color)[name]
+        piece = Gamestate.referenceHand[name]
 
         # Set piece to correct orientation and location
         orientation = move[1]
@@ -115,7 +140,7 @@ class Gamestate:
         self.updateCorners(self.turn, piece.corners)
 
         # Remove piece played from hand
-        del self.getHand(self.turn)[name]
+        self.getHand(self.turn)[name] = False
 
         # Reset pass count
         self.passCount = 0
@@ -238,8 +263,8 @@ class Gamestate:
                        "Two",
                        "One"]
         for name in sortednames:
-            if name in hand:
-                rtn.append(hand[name])
+            if hand[name]:
+                rtn.append(Gamestate.referenceHand[name])
         return rtn
 
     # Returns the corner list corresponding to int color
@@ -287,7 +312,7 @@ class Gamestate:
         corners = self.getCorners(self.turn)
 
         # If no corners or no pieces in hand, no moves are possible
-        if len(hand) == 0 or len(corners) == 0:
+        if not (True in hand.values()) or len(corners) == 0:
             return rtn
 
         # For each piece, find list of moves for each orientation
@@ -358,7 +383,7 @@ class Gamestate:
         corners = self.getCorners(self.turn)
 
         # If no corners or no pieces in hand, no moves are possible
-        if len(hand) == 0 or len(corners) == 0:
+        if not (True in hand.values()) or len(corners) == 0:
             return False
 
         # For each piece, find list of moves for each orientation
@@ -439,8 +464,9 @@ class Gamestate:
         scores = [0,0,0,0]
         for i in range(1, 5):
             hand = self.getHand(i)
-            for name, piece in hand.items():
-                scores[i-1] = scores[i-1] - piece.size
+            for name, val in hand.items():
+                if val:
+                    scores[i-1] = scores[i-1] - Gamestate.referenceHand[name].size
 
         print("Final scores:")
         print("Blue:")
@@ -459,8 +485,9 @@ class Gamestate:
     # Print a player's hand
     def printHand(self, i):
         hand = self.getHand(i)
-        for name, piece in hand.items():
-            sys.stdout.write(name + ' ')
+        for name, val in hand.items():
+            if val:
+                sys.stdout.write(name + ' ')
         sys.stdout.write("\n")
 
     # Print a player's hand sorted by piece size
