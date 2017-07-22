@@ -54,7 +54,8 @@ def splitCornerArray(corners):
     rtn = list()
     numCorners = corners[0].size/2
     for i in range(0, numCorners):
-        rtn.append(corners[:,2*i:2*(i+1)])
+        cur = corners[:,2*i:2*(i+1)]
+        rtn.append(cur.copy())
     return rtn
 
 class Piece:

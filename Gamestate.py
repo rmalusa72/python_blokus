@@ -138,6 +138,8 @@ class Gamestate:
 
         # Update corner list
         self.updateCorners(self.turn, piece.corners)
+        print("Updated corners:")
+        print(self.getCorners(self.turn))
 
         # Remove piece played from hand
         self.getHand(self.turn)[name] = False
