@@ -3,8 +3,10 @@
 # board, etc. - and functions useful for setup of gamestates
 
 from Pieces import *
+from copy import deepcopy
 import sys
 import numpy as np
+
 
 # Initializes a beginning hand with one of each piece
 def initRefHand():
@@ -58,7 +60,8 @@ def initHand():
     return rtn
 
 # Initializes a list with the starting corner for a given player
-def startCorner(color, boardsize):
+def startCorner(color):
+    boardsize = 20
     corners = list()
     if color == 1:
         corners.append(np.array([[-1,0],[-1,0]]))
@@ -72,33 +75,56 @@ def startCorner(color, boardsize):
     return corners
 
 # Initializes an empty board of size boardSize
-def initBoard(boardSize):
+def initBoard():
+    boardSize = 20
     board = np.zeros((boardSize,boardSize),dtype=int)
     return board
 
 class Gamestate:
     '''Represents a game state in Blokus, with hands and board'''
 
-    # NOTE: Change things to use single reference hand instead of each gamestate
-    # having four, that is gonna be inefficient when going thru the probability
-    # space
     referenceHand = initRefHand()
-    
-    # Makes a beginning game state
-    def __init__(self, boardsize):
-        self.blue = initHand()
-        self.yellow = initHand()
-        self.red = initHand()
-        self.green = initHand()
-        self.bcorners = startCorner(1, boardsize)
-        self.ycorners = startCorner(2, boardsize)
-        self.rcorners = startCorner(3, boardsize)
-        self.gcorners = startCorner(4, boardsize)
-        self.board = initBoard(boardsize)
-        self.boardsize = boardsize
-        self.turn = 1
-        self.passCount = 0
+    boardsize = 20
 
+    # Makes a gamestate with given parameters, or a beginning gamestate if
+    # no parameters
+    def __init__(self, blue = initHand(), yellow = initHand(), red = initHand(),
+                 green = initHand(),
+                 bcorners = startCorner(1),
+                 ycorners = startCorner(2),
+                 rcorners = startCorner(3),
+                 gcorners = startCorner(4),
+                 board = initBoard(), turn = 1, passCount = 0,
+                 lastPlayed = [None, None, None, None]):
+        self.blue = blue
+        self.yellow = yellow
+        self.red = red
+        self.green = green
+        self.bcorners = bcorners
+        self.ycorners = ycorners
+        self.rcorners = rcorners
+        self.gcorners = gcorners
+        self.board = board
+        self.turn = turn
+        self.passCount = passCount
+        self.lastPlayed = lastPlayed
+
+    # Returns a deep copy of self  
+    def duplicate(self):
+        blue = deepcopy(self.blue)
+        yellow = deepcopy(self.yellow)
+        red = deepcopy(self.red)
+        green = deepcopy(self.green)
+        bcorners = deepcopy(self.bcorners)
+        ycorners = deepcopy(self.ycorners)
+        rcorners = deepcopy(self.rcorners)
+        gcorners = deepcopy(self.gcorners)
+        board = self.board.copy()
+        turn = self.turn
+        passCount = self.passCount
+        lastPlayed = deepcopy(self.lastPlayed)
+        return Gamestate(blue, yellow, red, green, bcorners, ycorners, rcorners,
+                         gcorners, board, turn, passCount, lastPlayed)
 
     # Updates gamestate with provided move if it is legal,
     # or else returns False
@@ -144,17 +170,17 @@ class Gamestate:
 
         # Reset pass count
         self.passCount = 0
+    
+        # Update lastPlayed
+        self.setLastPlayed(name, self.turn)
         
         # Advance turn
         self.advanceTurn()
-    
         
     # Returns whether a move (as oriented and located piece) is valid
     def moveCheck(self, piece):
         
         # Check if one of piece's corners matches an open corner on the board
-        # NOTE: make function to break 2x2n corners array into list of individual
-        # corners, I do it several times
         bcorners = self.getCorners(self.turn)
         pcorners = piece.corners
         diagonal = False
@@ -195,7 +221,7 @@ class Gamestate:
             y = p.shape[1,i]
 
             # If point is off board, conflict
-            if x < 0 or y < 0 or x >= self.boardsize or y >= self.boardsize:
+            if x < 0 or y < 0 or x >= Gamestate.boardsize or y >= Gamestate.boardsize:
                 return True
 
             # If tile is already occupied, there is a conflict
@@ -209,10 +235,10 @@ class Gamestate:
             nears['n'] = False
 
             # Change 'nears' to appropriate coordinates where they exist
-            if x < (self.boardsize - 1):
+            if x < (Gamestate.boardsize - 1):
                 nears['e'] = np.array([[x+1],[y]])
 
-            if y < (self.boardsize - 1):
+            if y < (Gamestate.boardsize - 1):
                 nears['s'] = np.array([[x],[y+1]])
 
             if x > 0:
@@ -289,10 +315,17 @@ class Gamestate:
                     del oldList[j]
                     obliterated = True
                     break
-            if -1 in cur or self.boardsize in cur:
+            if -1 in cur or Gamestate.boardsize in cur:
                 continue
             if not obliterated:
                 oldList.append(cur.copy())
+
+    # Sets the lastPlayed variable for color to name 
+    def setLastPlayed(self, name, color):
+        for i in range(1,5):
+            if color == i:
+                self.lastPlayed[i-1] = name
+        
 
     # Given a 2xn matrix of coordinates, set those to int color
     def colorSet(self, coords, color):
@@ -458,16 +491,22 @@ class Gamestate:
         if self.passCount >= 4:
             return True
         return False
-    
-    # Print current scores
-    def printScores(self):
+
+    def getScores(self):
         scores = [0,0,0,0]
-        for i in range(1, 5):
+        for i in range(1,5):
             hand = self.getHand(i)
             for name, val in hand.items():
                 if val:
                     scores[i-1] = scores[i-1] - Gamestate.referenceHand[name].size
+            if not (True in hand) and self.lastPlayed[i-1]:
+                scores[i-1] = scores[i-1] - 5
+        return scores
+        
+    # Print current scores
+    def printScores(self):
 
+        scores = self.getScores()
         print("Final scores:")
         print("Blue:")
         print scores[0]

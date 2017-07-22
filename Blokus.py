@@ -8,7 +8,7 @@ from Gamestate import *
 from Players import *
 
 # Initialize current gamestate variable
-curr = Gamestate(20)
+curr = Gamestate()
 referenceHand = initHand() # for checks, etc.
 
 # Fill list of players with humans and AIs, based on player input
