@@ -50,12 +50,13 @@ def toBoolArray(points):
     return shape
 
 # Given a 2x2n array containing n corners, returns a list containing n 2x2 arrays
+# NOTE: these will change as the piece moves! Make a copy to save them
 def splitCornerArray(corners):
     rtn = list()
     numCorners = corners[0].size/2
     for i in range(0, numCorners):
         cur = corners[:,2*i:2*(i+1)]
-        rtn.append(cur.copy())
+        rtn.append(cur)
     return rtn
 
 class Piece:
@@ -151,6 +152,7 @@ class Piece:
 
     # Translates all coordinates in a piece by x and y
     def translate(self, x,y):
+
         self.shape[0] += x
         self.shape[1] += y
         self.corners[0] += x

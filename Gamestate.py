@@ -138,8 +138,6 @@ class Gamestate:
 
         # Update corner list
         self.updateCorners(self.turn, piece.corners)
-        print("Updated corners:")
-        print(self.getCorners(self.turn))
 
         # Remove piece played from hand
         self.getHand(self.turn)[name] = False
@@ -294,7 +292,7 @@ class Gamestate:
             if -1 in cur or self.boardsize in cur:
                 continue
             if not obliterated:
-                oldList.append(cur)
+                oldList.append(cur.copy())
 
     # Given a 2xn matrix of coordinates, set those to int color
     def colorSet(self, coords, color):
