@@ -492,6 +492,7 @@ class Gamestate:
             return True
         return False
 
+    # Returns list of scores
     def getScores(self):
         scores = [0,0,0,0]
         for i in range(1,5):
@@ -502,6 +503,25 @@ class Gamestate:
             if not (True in hand) and self.lastPlayed[i-1]:
                 scores[i-1] = scores[i-1] - 5
         return scores
+
+    # End-value a gamestate for a given color 
+    # NOTE: Move to AI player when I have more of a framework there
+    def value(self, color):
+        if self.isTerminal():
+            scores = getScores(self)
+            winner = 1
+            for i in range(1,5):
+                if scores[i-1] = scores[winner-1]:
+                    return 0
+                if scores[i-1] > scores[winner-1]:
+                    winner = i
+            if color = winner:
+                return 1
+            else:
+                return -1
+        else:
+            return 0
+
         
     # Print current scores
     def printScores(self):
