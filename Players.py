@@ -111,16 +111,40 @@ def expand(gamestate):
         children.append(new_gamestate)
     return children
 
+# Expands a given gamestate to a list of children (given a list of moves)
+def expandFromList(gamestate, moves):
+    children = list()
+    for move in moves:
+        new_gamestate = gamestate.duplicate()
+        new_gamestate.update(move)
+        children.append(new_gamestate)
+    return children
+
+# Maxn search wrapper which returns the move leading to the best outcome
+def maxn_getMove(gamestate, max_score):
+    color = gamestate.turn
+    moves = gamestate.listMoves()
+    children = expandFromList(gamestate, moves)
+    if len(children) != 0:
+        max_val = -100
+        max_val_index = -1
+        for i in range(0, len(children)):
+            score = maxn(children[i], max_score)[color-1]
+            if score == max_score:
+                return moves[i]
+            if score > max_val:
+                max_val = score
+                max_val_index = i
+        return moves[max_val_index]
+    else:
+        return list()
+
 # Maxn search
 # * added immediate pruning
 def maxn(gamestate, max_score):
-
-    print("maxn called")
-    print(gamestate.board)
     
     # If gamestate is terminal, return vector of utility
     if gamestate.isTerminal():
-        print(utility(gamestate))
         return utility(gamestate)
     else:
         # Expand to list of child gamestates; do maxn on each and find max
@@ -133,59 +157,17 @@ def maxn(gamestate, max_score):
                 # If a child has the best possible score for a player,
                 # prune immediately and disregard other children
                 if score[color-1] == max_score:
-                    print("PRUNING!")
-                    print(score)
                     return score
                 if score[color-1] > max_val[color-1]:
                     max_val = score
 
-            print(max_val)
             return max_val
         else:
             # If no moves are possible but gamestate is not terminal,
             # simply pass 
             new_gamestate = gamestate.duplicate()
             new_gamestate.update(list())
-            print("passing")
             return maxn(new_gamestate, max_score)
-
-# Maxn search using maximum sum of components for shallow pruning
-# Upper bound for given player's score is maximum sum minus current best
-# for prev player. 
-def shmaxn(gamestate, bound, max_score, max_sum):
-
-    print("shmaxn called")
-    print(bound)
-    
-    # If gamestate is terminal, return vector of utility
-    print(gamestate.board)
-    if gamestate.isTerminal():
-        print(utility(gamestate))
-        return utility(gamestate)
-
-    else:
-        # Expand to list of children
-        color = gamestate.turn
-        children = expand(gamestate)
-        if len(children) != 0:
-            max_val = shmaxn(children[0], bound, max_score, max_sum)
-            for child in children[1:]:
-                # If score reaches upper bound, pick that child & prune
-                if max_val[color-1] >= bound:
-                    print("PRUNING!")
-                    print(max_val)
-                    return max_val
-                current = shmaxn(child, max_sum - max_val[color-1],
-                                 max_score, max_sum)
-                if current[color-1] > max_val[color - 1]:
-                    max_val = current
-            print(max_val)
-            return max_val
-        else:
-            print("passing")
-            child = gamestate.duplicate()
-            child.update(list())
-            return shmaxn(child, max_score, max_score, max_sum)
     
 class AIPlayer(Player):
     def getMove(self, update):
@@ -197,5 +179,6 @@ class veryStupidAIPlayer(AIPlayer):
         moves = update.listMoves()
         return moves[0]
 
-#class impracticallyThoroughAIPlayer(AIPlayer):
-    
+class impracticallyThoroughAIPlayer(AIPlayer):
+    def getMove(self, update):
+        return maxn_getMove(update, 1)

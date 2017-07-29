@@ -31,7 +31,7 @@ for i in range(1,5):
     if n == 0:
         players[i] = HumanPlayer(i)
     if n == 1:
-        players[i] = veryStupidAIPlayer(i)
+        players[i] = impracticallyThoroughAIPlayer(i)
 
 # MAIN GAME LOOP
 # Quit when curr is terminal (aka four consecutive passes have occurred)
