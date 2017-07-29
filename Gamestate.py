@@ -537,6 +537,3 @@ class Gamestate:
             sys.stdout.write(p.name + ' ')
         sys.stdout.write("\n")
     
-    # Copy this gamestate
-    #def copy(self):
-        # IMPLEMENT THIS

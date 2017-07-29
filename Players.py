@@ -101,6 +101,43 @@ def utility(gamestate):
 
     return utilityVector  
 
+# Expands a given gamestate to a list of children
+def expand(gamestate):
+    children = list()
+    moves = gamestate.listMoves()
+    for move in moves:
+        new_gamestate = gamestate.duplicate()
+        new_gamestate.update(move)
+        children.append(new_gamestate)
+    return children
+
+# Maxn search
+def maxn(gamestate):
+    print(gamestate.board)
+    if gamestate.isTerminal():
+        print("terminal state!!! returning")
+        print(utility(gamestate))
+        return utility(gamestate)
+    else:
+        color = gamestate.turn
+        children = expand(gamestate)
+        if len(children) != 0:
+            max_val = [-100,-100, -100, -100]
+            for child in children:
+                print("calling maxn on child")
+                score = maxn(child)
+                if score[color-1] > max_val[color-1]:
+                    max_val = score
+
+            print("returning max child")
+            print(max_val)
+            return max_val
+        else:
+            print("no moves - passing")
+            new_gamestate = gamestate.duplicate()
+            new_gamestate.update(list())
+            return maxn(new_gamestate)
+                    
     
 class AIPlayer(Player):
     def getMove(self, update):
@@ -112,5 +149,5 @@ class veryStupidAIPlayer(AIPlayer):
         moves = update.listMoves()
         return moves[0]
 
-class impracticallyThoroughAIPlayer(AIPlayer):
+#class impracticallyThoroughAIPlayer(AIPlayer):
     
