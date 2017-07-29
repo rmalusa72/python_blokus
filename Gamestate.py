@@ -506,11 +506,12 @@ class Gamestate:
 
     # End-value a gamestate for a given color 
     # NOTE: Move to AI player when I have more of a framework there
-    def value(self, color):
+    def utility(self, color):
         if self.isTerminal():
             scores = getScores(self)
             winner = 1
             for i in range(1,5):
+                # NOTE: This makes no sense, returns 0 when any tie, not winning tie
                 if scores[i-1] = scores[winner-1]:
                     return 0
                 if scores[i-1] > scores[winner-1]:

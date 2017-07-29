@@ -70,13 +70,47 @@ class HumanPlayer(Player):
             gotvalidmove = True
             
         return (name, piece_orientation, move_xmin, move_ymin)        
+
+    
+# Calculate a vector w/utility for each player in a terminal gamestate
+# where 0 is in a tie, -1 is a loss, and 1 is a win
+def utility(gamestate):
+    utilityVector = [-1,-1,-1,-1]
+    scores = gamestate.getScores()
+    hasHighest = [False,False,False,False]
+    hasHighestCount = 0
+    highest = scores[0]
+    for i in range(1,5):
+        if scores[i-1] == highest:
+            hasHighest[i-1] = True
+            hasHighestCount = hasHighestCount + 1
+        if scores[i-1] > highest:
+            highest = scores[i-1]
+            hasHighest = [False, False, False, False]
+            hasHighest[i-1] = True
+            hasHighestCount = 1
+
+    if hasHighestCount != 1:
+        for i in range(0,4):
+            if hasHighest[i]:
+                utilityVector[i] = 0
+    else:
+        for i in range(0,4):
+            if hasHighest[i]:
+                utilityVector[i] = 1
+
+    return utilityVector  
+
     
 class AIPlayer(Player):
     def getMove(self, update):
         #IMPLEMENT THIS
         return list()
 
-class veryStupidAIPlayer(Player):
+class veryStupidAIPlayer(AIPlayer):
     def getMove(self, update):
         moves = update.listMoves()
         return moves[0]
+
+class impracticallyThoroughAIPlayer(AIPlayer):
+    
