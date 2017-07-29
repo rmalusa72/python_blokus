@@ -21,7 +21,7 @@ for i in range(1,5):
     while not success:
         try:
             n = int(raw_input())
-            if n!=0 and n!= 1:
+            if n!=0 and n!= 1 and n!=2:
                 print("Please enter zero or one only")
             else:
                 success = True
@@ -31,7 +31,9 @@ for i in range(1,5):
     if n == 0:
         players[i] = HumanPlayer(i)
     if n == 1:
-        players[i] = impracticallyThoroughAIPlayer(i)
+        players[i] = veryStupidAIPlayer(i)
+    if n == 2:
+        players[i] = xPlyAIPlayer(i)
 
 # MAIN GAME LOOP
 # Quit when curr is terminal (aka four consecutive passes have occurred)
