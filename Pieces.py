@@ -91,6 +91,8 @@ class Piece:
         if self.orientation & 0b100:
             self.orientation ^= 0b010
 
+        self.reduceOrientation()
+
     # flips piece vertically
     def flipV(self):
         vflip = np.array([[1,0],[0,-1]])
@@ -106,6 +108,8 @@ class Piece:
         self.orientation ^= 0b001
         if not self.orientation & 0b100:
             self.orientation ^= 0b010
+
+        self.reduceOrientation()
 
     # rotates piece 90*turns degrees ccw
     # NOTE: rotation matrices are for cw turns bc of y axis pointing down
@@ -145,7 +149,8 @@ class Piece:
                 self.orientation ^= 0b100
             else:
                 self.orientation ^= 0b110
-            
+
+            self.reduceOrientation()
             return True
         else:
             return False
@@ -165,6 +170,7 @@ class Piece:
             self.flipH()
         while self.orientation != new_orientation:
             self.rotate(1)
+        self.reduceOrientation()
 
     # checks if a given 2xn array of coordinates  matches any permutation of this piece
     # Returns orientation that matches, or -1 if no match
@@ -208,57 +214,34 @@ class Piece:
                 
         return -1
 
-    # Returns whether two orientations are congruent
-    # when considered with the symmetry of the piece in mind
-    def congruentOrientations(self, o1, o2):
-        if o1 == o2:
-            return True
-        if self.r90 and self.r180 and self.chiral:
-            return False
+    # Reduces orientation to the smallest numbered orientation that is congruent
+    # considering the symmetry of the piece
+    def reduceOrientation(self):
         if self.r90 and self.r180 and not self.chiral:
-            if o1 == 0:
-                return o2 == 1
-            if o1 == 1:
-                return o2 == 0
-            if o1 == 2:
-                return o2 == 3
-            if o1 == 3:
-                return o2 == 2
-            if o1 == 4:
-                return o2 == 5
-            if o1 == 5:
-                return o2 == 4
-            if o1 == 6:
-                return o2 == 7
-            if o1 == 7:
-                return o2 == 6
+            if self.orientation == 1:
+                self.orientation = 0
+            if self.orientation == 3:
+                self.orientation = 2
+            if self.orientation == 5:
+                self.orientation = 4
+            if self.orientation == 7:
+                self.orientation = 6
         if self.r90 and not self.r180 and self.chiral:
-            if o1 == 0:
-                return o2 == 2
-            if o1 == 1:
-                return o2 == 3
-            if o1 == 2:
-                return o2 == 0
-            if o1 == 3:
-                return o2 == 1
-            if o1 == 4:
-                return o2 == 6
-            if o1 == 5:
-                return o2 == 7
-            if o1 == 6:
-                return o2 == 4
-            if o1 == 7:
-                return o2 == 5
+            if self.orientation == 2:
+                self.orientation = 0
+            if self.orientation == 3:
+                self.orientation = 1
+            if self.orientation == 6:
+                self.orientation = 4
+            if self.orientation == 7:
+                self.orientation = 5
         if self.r90 and not self.r180 and not self.chiral:
-            if ((o1 == 0) or (o1 == 1) or (o1 == 2) or (o1 == 3)):
-                return ((o2 == 0) or (o2 == 1) or (o2 == 2) or (o2 == 3))
-            if ((o1 == 4) or (o1 == 5) or (o1 == 6) or (o1 == 7)):
-                return ((o2 == 4) or (o2 == 5) or (o2 == 6) or (o2 == 7))
-        if not self.r90 and not self.r180 and not self.chiral:
-            return True
-
-            
-            
+            if (self.orientation == 1 or self.orientation == 2
+                or self.orientation == 3):
+                self.orientation = 0
+            if (self.orientation == 5 or self.orientation == 6
+                or self.orientation == 7):
+                self.orientation == 4    
                 
     def __repr__(self):
         return toBoolArray(self.shape).__repr__()
