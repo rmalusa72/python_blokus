@@ -6,6 +6,9 @@ import numpy as np
 from Pieces import *
 from Gamestate import *
 from Players import *
+from HumanPlayer import *
+from MaxnPlayers import *
+from MCTSPlayers import *
 
 # Initialize current gamestate variable
 curr = Gamestate()
@@ -33,7 +36,7 @@ for i in range(1,5):
     if n == 1:
         players[i] = veryStupidAIPlayer(i)
     if n == 2:
-        players[i] = xPlyAIPlayer(i)
+        players[i] = monteCarloPlayer(i)
 
 # MAIN GAME LOOP
 # Quit when curr is terminal (aka four consecutive passes have occurred)
