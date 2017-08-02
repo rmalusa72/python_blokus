@@ -373,6 +373,9 @@ class Gamestate:
                 elif piece.r90 and not piece.r180:
                     piece.rotate(1)
                     rtn.extend(self.findPieceMoves(piece))
+
+        # Finally, add 'pass,' which is always a valid move
+        rtn.append(list())
         return rtn
 
     # Find all moves for a given piece in a specific orientation
