@@ -207,6 +207,58 @@ class Piece:
                     return self.orientation
                 
         return -1
+
+    # Returns whether two orientations are congruent
+    # when considered with the symmetry of the piece in mind
+    def congruentOrientations(self, o1, o2):
+        if o1 == o2:
+            return True
+        if self.r90 and self.r180 and self.chiral:
+            return False
+        if self.r90 and self.r180 and not self.chiral:
+            if o1 == 0:
+                return o2 == 1
+            if o1 == 1:
+                return o2 == 0
+            if o1 == 2:
+                return o2 == 3
+            if o1 == 3:
+                return o2 == 2
+            if o1 == 4:
+                return o2 == 5
+            if o1 == 5:
+                return o2 == 4
+            if o1 == 6:
+                return o2 == 7
+            if o1 == 7:
+                return o2 == 6
+        if self.r90 and not self.r180 and self.chiral:
+            if o1 == 0:
+                return o2 == 2
+            if o1 == 1:
+                return o2 == 3
+            if o1 == 2:
+                return o2 == 0
+            if o1 == 3:
+                return o2 == 1
+            if o1 == 4:
+                return o2 == 6
+            if o1 == 5:
+                return o2 == 7
+            if o1 == 6:
+                return o2 == 4
+            if o1 == 7:
+                return o2 == 5
+        if self.r90 and not self.r180 and not self.chiral:
+            if ((o1 == 0) or (o1 == 1) or (o1 == 2) or (o1 == 3)):
+                return ((o2 == 0) or (o2 == 1) or (o2 == 2) or (o2 == 3))
+            if ((o1 == 4) or (o1 == 5) or (o1 == 6) or (o1 == 7)):
+                return ((o2 == 4) or (o2 == 5) or (o2 == 6) or (o2 == 7))
+        if not self.r90 and not self.r180 and not self.chiral:
+            return True
+
+            
+            
                 
     def __repr__(self):
         return toBoolArray(self.shape).__repr__()
