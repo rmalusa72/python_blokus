@@ -127,7 +127,8 @@ class Piece:
                 self.orientation ^= 0b100
             else:
                 self.orientation ^= 0b110
-            
+
+            self.reduceOrientation()  
             return True
         elif turns == 2 and self.r180:
             rmat = np.array([[-1,0],[0,-1]])
@@ -137,6 +138,7 @@ class Piece:
             # update orientation - flip second bit
             self.orientation ^= 0b010
 
+            self.reduceOrientation()            
             return True
         elif turns == 3 and self.r90:
             rmat = np.array([[0,-1],[1,0]])
@@ -241,7 +243,7 @@ class Piece:
                 self.orientation = 0
             if (self.orientation == 5 or self.orientation == 6
                 or self.orientation == 7):
-                self.orientation == 4    
+                self.orientation = 4    
                 
     def __repr__(self):
         return toBoolArray(self.shape).__repr__()
