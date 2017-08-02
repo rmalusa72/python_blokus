@@ -131,6 +131,7 @@ class Gamestate:
     def update(self, move):
 
         if len(move) != 4: # Then move is a pass
+            self.setLastPlayed(None, self.turn)
             self.passCount = self.passCount + 1
             self.advanceTurn()
             return
@@ -374,8 +375,8 @@ class Gamestate:
                     piece.rotate(1)
                     rtn.extend(self.findPieceMoves(piece))
 
-        # Finally, add 'pass,' which is always a valid move
-        rtn.append(list())
+        # Finally, add 'pass!' which is always a valid move
+        rtn.append('pass!')
         return rtn
 
     # Find all moves for a given piece in a specific orientation

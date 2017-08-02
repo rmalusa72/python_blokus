@@ -49,7 +49,7 @@ while not curr.isTerminal():
         while not success:
             # Ask for move
             move = players[curr.turn].getMove(curr)
-            # A pass is an empty list and has len = 0; otherwise len = 4
+            # A pass is a single string ('pass!') and has len = 5; otherwise len = 4
             if len(move) != 4:
                 print("Passing!")
                 curr.update(move)
