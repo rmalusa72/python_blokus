@@ -8,24 +8,17 @@ import pdb
     
 class MCNode():
 
-    def __init__(self, gamestate, parent = None, children = dict(), fullyExpanded = False, playouts = 0, wins = [0,0,0,0]):
+    def __init__(self, gamestate, parent = None, children = dict(), fullyExpanded = False, playouts = 0):
         self.gamestate = gamestate
         self.parent = parent
         self.children = children
         self.fullyExpanded = False
         self.playouts = playouts
-        self.wins = wins
+        self.wins = [0,0,0,0]
 
     # Given a utility vector for a terminal gamestate descended from this node,
     # update wins and playouts accordingly
     def updateStats(self, utility_vector):
-        print("Previous state of node:")
-        print(self.wins)
-        print(self.playouts)
-        print("Updating stats of node")
-        print(self)
-        print("with vector")
-        print(utility_vector)
         self.playouts = self.playouts + 1
         for i in range(0,4):
             if utility_vector[i] == 1:
@@ -37,11 +30,7 @@ class MCNode():
     def expand(self):
 
         unexplored_moves = self.gamestate.listMoves()
-        print("Unexplored moves:")
-        print(unexplored_moves)
         for move, child in self.children.items():
-            print("Removing tried move:")
-            print(move)
             try:
                 unexplored_moves.remove(move)
             except ValueError:
@@ -56,11 +45,7 @@ class MCNode():
         new_node = self.children[randMove]
         
         # Run simulation from new node
-        print("wins before simulation:")
-        print(self.wins)
         sim_result = new_node.simulateGame()
-        print("wins after simulation:")
-        print(self.wins)
         
         # Update own stats with this result
         self.updateStats(sim_result)
