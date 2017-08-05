@@ -49,6 +49,11 @@ class monteCarloPlayer(AIPlayer):
 
         self.prev = update
         self.root.printTree()
+
+        # Update tree to reflect path taken
+
+
+        # Then return move
         return('pass!')
         
     # Given a gamestate and a following gamestate, find what move (if any)

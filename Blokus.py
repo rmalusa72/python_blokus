@@ -43,23 +43,19 @@ for i in range(1,5):
 while not curr.isTerminal():
 
     curr.printBoard()
-    if curr.canMove():
-        # Repeat ask-for-move loop until valid move successfully acquired
-        success = False
-        while not success:
-            # Ask for move
-            move = players[curr.turn].getMove(curr.duplicate())
-            # A pass is a single string ('pass!') and has len = 5; otherwise len = 4
-            if len(move) != 4:
-                print("Passing!")
-                curr.update(move)
-                success = True
-            elif curr.update(move) != False:
-                success = True
-            else:
-                print("Invalid move!") 
-    else:
-        print("Player has no moves - passing")
-        curr.update(list())
+    # Repeat ask-for-move loop until valid move successfully acquired
+    success = False
+    while not success:
+        # Ask for move
+        move = players[curr.turn].getMove(curr.duplicate())
+        # A pass is a single string ('pass!') and has len = 5; otherwise len = 4
+        if len(move) != 4:
+            print("Passing!")
+            curr.update(move)
+            success = True
+        elif curr.update(move) != False:
+            success = True
+        else:
+            print("Invalid move!") 
 
 curr.printScores()
