@@ -4,7 +4,7 @@
 from Players import *
 from MCTree import *
 import numpy as np
-
+import time
     
 class monteCarloPlayer(AIPlayer):
     def getMove(self, update):
@@ -29,11 +29,13 @@ class monteCarloPlayer(AIPlayer):
                 # Find move made by player, then move down tree to corresponding
                 # node, or create it if necessary
                 moveMade = self.findMoveMade(self.prev, update, colorToCheck)
-                print(moveMade)
+                new_gamestate = self.prev.duplicate()
+                new_gamestate.update(moveMade)
+                
                 if moveMade in self.current.children:
                     self.current = self.current.children[moveMade]
                 else:
-                    self.current.children[moveMade] = MCNode(moveMade, parent = self.current)
+                    self.current.children[moveMade] = MCNode(new_gamestate, parent = self.current)
                     self.current = self.current.children[moveMade]
 
                 # Go to next player in order
@@ -45,16 +47,27 @@ class monteCarloPlayer(AIPlayer):
         
         # Then repeat Monte Carlo iterations until you run out of time
 
-        # And then pick best move
+        start_time = time.time()
+        while time.time() - start_time < 60:
+            self.mcIteration()
 
-        self.prev = update
         self.root.printTree()
+        
+        # And pick best move
+
+        move = 'pass!'
+
 
         # Update tree to reflect path taken
+        self.prev = update
+        if move in self.current.children:
+            self.current = self.current.children[move]
+        else:
+            self.current.children[move] = MCNode(move, parent = self.current)
+            self.current = self.current.children[move]
 
-
-        # Then return move
-        return('pass!')
+        # Then return the move to make
+        return(move)
         
     # Given a gamestate and a following gamestate, find what move (if any)
     # was made by player color
