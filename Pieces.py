@@ -181,6 +181,7 @@ class Piece:
         compare = toBoolArray(compare)
         boolshape = toBoolArray(self.shape)
         if np.array_equal(boolshape, compare):
+            self.reduceOrientation()
             return self.orientation
 
         if self.r90 and self.r180:
@@ -188,11 +189,13 @@ class Piece:
                 self.rotate(1)
                 boolshape = toBoolArray(self.shape)
                 if np.array_equal(boolshape, compare):
+                    self.reduceOrientation()
                     return self.orientation
         elif self.r90 and not self.r180:
             self.rotate(1)
             boolshape = toBoolArray(self.shape)
             if np.array_equal(boolshape, compare):
+                self.reduceOrientation()
                 return self.orientation
 
         if self.chiral:
@@ -200,6 +203,7 @@ class Piece:
 
             boolshape = toBoolArray(self.shape)
             if np.array_equal(boolshape, compare):
+                self.reduceOrientation()
                 return self.orientation
 
             if self.r90 and self.r180:
@@ -207,11 +211,13 @@ class Piece:
                     self.rotate(1)
                     boolshape = toBoolArray(self.shape)
                     if np.array_equal(boolshape, compare):
+                        self.reduceOrientation()
                         return self.orientation
             elif self.r90 and not self.r180:
                 self.rotate(1)
                 boolshape = toBoolArray(self.shape)
                 if np.array_equal(boolshape, compare):
+                    self.reduceOrientation()
                     return self.orientation
                 
         return -1

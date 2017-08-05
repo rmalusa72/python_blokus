@@ -48,7 +48,7 @@ while not curr.isTerminal():
         success = False
         while not success:
             # Ask for move
-            move = players[curr.turn].getMove(curr)
+            move = players[curr.turn].getMove(curr.duplicate())
             # A pass is a single string ('pass!') and has len = 5; otherwise len = 4
             if len(move) != 4:
                 print("Passing!")
