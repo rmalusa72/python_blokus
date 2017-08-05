@@ -3,18 +3,32 @@
 
 from Gamestate import *
 from Players import *
+import sys
 import random
 import pdb
     
 class MCNode():
 
-    def __init__(self, gamestate, parent = None, children = dict(), fullyExpanded = False, playouts = 0):
+    def __init__(self, gamestate, parent = None, fullyExpanded = False, playouts = 0):
         self.gamestate = gamestate
         self.parent = parent
-        self.children = children
+        self.children = dict()
         self.fullyExpanded = False
         self.playouts = playouts
         self.wins = [0,0,0,0]
+
+    # Prints the tree rooted at this node
+    def printTree(self):
+        print("root")
+        self.printTreeRec(1)
+        
+    # Recursive helper method for printTree
+    def printTreeRec(self, indent):
+        for move, child in self.children.items():
+            for i in range(0, indent):
+                sys.stdout.write("\t")
+            print(move)
+            child.printTreeRec(indent + 1)
 
     # Given a utility vector for a terminal gamestate descended from this node,
     # update wins and playouts accordingly

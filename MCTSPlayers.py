@@ -48,6 +48,7 @@ class monteCarloPlayer(AIPlayer):
         # And then pick best move
 
         self.prev = update
+        self.root.printTree()
         return('pass!')
         
     # Given a gamestate and a following gamestate, find what move (if any)
