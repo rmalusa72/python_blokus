@@ -61,8 +61,7 @@ class monteCarloPlayer(AIPlayer):
         start_time = time.time()
         while time.time() - start_time < 600:
             self.mcIteration()
-
-        self.current.printTree()
+            self.current.printTree()
         
         # And pick best move
 
@@ -130,7 +129,7 @@ class monteCarloPlayer(AIPlayer):
         node = self.current
         canStep = self.ucbStep(node)
         while not canStep == False:
-            node = nocd.children[canStep]
+            node = node.children[canStep]
             canStep = self.ucbStep(node)
 
         # Then expand that node, saving the result (utility vector) of
@@ -149,13 +148,14 @@ class monteCarloPlayer(AIPlayer):
         highestUCB = -1
         highestUCBMove = None
         for move, child in node.children.items():
+            
             # The upper confidence bound of a node is
             # xi + sqrt(2*ln(n)/ni)
             # where n is total playouts from current gamestate,
             # ni = total playouts from node i,
             # wi = total wins from node i for player color, 
             # and xi = average payout for node i (wi/ni)
-            currNodeUCB = (child.wins[color-1]/(child.playouts*1)
+            currNodeUCB = (child.wins[color-1]/(child.playouts*1.0)
                            + np.sqrt(2 * np.log(self.current.playouts)
                                      / (child.playouts * 1.0)))
             if currNodeUCB > highestUCB:

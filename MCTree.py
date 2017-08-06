@@ -20,7 +20,10 @@ class MCNode():
     # Prints the tree rooted at this node
     def printTree(self):
         print("root")
-        print(self.gamestate.board)
+        sys.stdout.write("Wins: ")
+        sys.stdout.write(str(self.wins))
+        sys.stdout.write("/Playouts:")
+        print(str(self.playouts))
         self.printTreeRec(1)
         
     # Recursive helper method for printTree
@@ -29,12 +32,16 @@ class MCNode():
             for i in range(0, indent):
                 sys.stdout.write("\t")
             print(move)
-            print(child.gamestate.board)
+            sys.stdout.write("Wins: ")
+            sys.stdout.write(str(child.wins))
+            sys.stdout.write("/Playouts:")
+            print(str(child.playouts))
             child.printTreeRec(indent + 1)
 
     # Given a utility vector for a terminal gamestate descended from this node,
     # update wins and playouts accordingly
     def updateStats(self, utility_vector):
+        
         self.playouts = self.playouts + 1
         for i in range(0,4):
             if utility_vector[i] == 1:
@@ -64,7 +71,7 @@ class MCNode():
         new_node = self.children[randMove]
         
         # Run simulation from new node
-        sim_result = new_node.simulateGame()
+        sim_result = new_node.simulateGameWithFirstMoves()
         
         # Update own stats with this result
         self.updateStats(sim_result)
@@ -89,6 +96,26 @@ class MCNode():
             randMove = random.choice(moves)
             gamestate.update(randMove)
             
+        # Update playout and win count in self
+        utility_vector = utility(gamestate)
+        self.updateStats(utility_vector)
+
+        # Return utility vector for backpropagation
+        return utility_vector
+
+    def simulateGameWithFirstMoves(self):
+        
+        print("Simulating game with first moves...")
+
+        # Simulate game
+        gamestate = self.gamestate.duplicate()
+        while not gamestate.isTerminal():
+            move = gamestate.canMove()
+            if not move == False:
+                gamestate.update(move)
+            else:
+                gamestate.update('pass!')
+
         # Update playout and win count in self
         utility_vector = utility(gamestate)
         self.updateStats(utility_vector)
