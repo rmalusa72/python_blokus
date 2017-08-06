@@ -12,7 +12,7 @@ def weightedRandomMove(moves):
     weightedlist = list()
     for move in moves:
         if move != 'pass!':
-            for i in range(0, Gamestate.referenceHand[move[0]].size):
+            for i in range(0, Gamestate.Gamestate.referenceHand[move[0]].size):
                 weightedlist.append(move)
         else:
             weightedlist.append('pass!')

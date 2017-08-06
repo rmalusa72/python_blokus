@@ -1,13 +1,15 @@
 # MAXNPLAYERS.PY
 # Maxn-based players and their functions
 
-from Players import *
+import Pieces
+import Gamestate
+import Players
 
 # Maxn search wrapper which returns the move leading to the best outcome
 def maxn_getMove(gamestate, max_score):
     color = gamestate.turn
     moves = gamestate.listMoves()
-    children = expandFromList(gamestate, moves)
+    children = Players.expandFromList(gamestate, moves)
     if len(children) != 0:
         max_val = -100
         max_val_index = -1
@@ -28,11 +30,11 @@ def maxn(gamestate, max_score):
     
     # If gamestate is terminal, return vector of utility
     if gamestate.isTerminal():
-        return utility(gamestate)
+        return Players.utility(gamestate)
     else:
         # Expand to list of child gamestates; do maxn on each and find max
         color = gamestate.turn
-        children = expand(gamestate)
+        children = Players.expand(gamestate)
         if len(children) != 0:
             max_val = [-100,-100, -100, -100]
             for child in children:
@@ -52,7 +54,7 @@ def maxn(gamestate, max_score):
             new_gamestate.update(list())
             return maxn(new_gamestate, max_score)
     
-class impracticallyThoroughAIPlayer(AIPlayer):
+class impracticallyThoroughAIPlayer(Players.AIPlayer):
     def getMove(self, update):
         return maxn_getMove(update, 1)
 
@@ -60,7 +62,7 @@ class impracticallyThoroughAIPlayer(AIPlayer):
 def xPlyMaxn_getMove(gamestate, maxdepth, max_score):
     color = gamestate.turn
     moves = gamestate.listMoves()
-    children = expandFromList(gamestate, moves)
+    children = Players.expandFromList(gamestate, moves)
     if len(children) != 0:
         max_val = -100
         max_val_index = -1
@@ -83,10 +85,10 @@ def xPlyMaxn(gamestate, depth, maxdepth, max_score):
     print(gamestate.board)
     if depth == maxdepth or gamestate.isTerminal():
         print("terminal/reached depth limit")
-        return utility(gamestate)
+        return Players.utility(gamestate)
     else:
         color = gamestate.turn
-        children = expand(gamestate)
+        children = Players.expand(gamestate)
         if len(children) != 0:
             max_val = [-100, -100, -100, -100]
             for child in children:
@@ -104,7 +106,7 @@ def xPlyMaxn(gamestate, depth, maxdepth, max_score):
             return xPlyMaxn(child, depth + 1, maxdepth, max_score)
     
     
-class xPlyAIPlayer(AIPlayer):
+class xPlyAIPlayer(Players.AIPlayer):
     def getMove(self, update):
         return xPlyMaxn_getMove(update, 5, 1)
         

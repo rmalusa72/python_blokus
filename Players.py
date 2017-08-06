@@ -4,7 +4,8 @@
 
 import numpy as np
 import pdb
-from Gamestate import *
+import Gamestate
+import Pieces
 
 class Player:
     def __init__(self, color):

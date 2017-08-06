@@ -1,13 +1,16 @@
 # HUMANPLAYER.PY
 # Contains the human player class
 
-from Players import *
+import Players
+import Gamestate
+import Pieces
+import numpy as np
 
-class HumanPlayer(Player):
+class HumanPlayer(Players.Player):
 
     def __init__(self, color):
         self.color = color
-        self.referenceHand = initRefHand()
+        self.referenceHand = Gamestate.initRefHand()
 
     # When provided an updated gamestate, prompt player for their move
     def getMove(self, update):
@@ -55,7 +58,7 @@ class HumanPlayer(Player):
                     print("Those coordinates do not match that piece's shape")
                     continue
 
-                move_extremes = findExtremes(coords)
+                move_extremes = Pieces.findExtremes(coords)
                 move_xmin, move_ymin = move_extremes[0], move_extremes[2]
                 gotvalidmove = True
 

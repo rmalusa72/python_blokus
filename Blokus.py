@@ -3,16 +3,16 @@
 
 import sys
 import numpy as np
-from Pieces import *
-from Gamestate import *
-from Players import *
-from HumanPlayer import *
-from MaxnPlayers import *
-from MCTSPlayers import *
+import Pieces
+import Players
+import HumanPlayer
+import MaxnPlayers
+import MCTSPlayers
+import Gamestate
 
 # Initialize current gamestate variable
-curr = Gamestate()
-referenceHand = initHand() # for checks, etc.
+curr = Gamestate.Gamestate()
+referenceHand = Gamestate.initHand() # for checks, etc.
 
 # Fill list of players with humans and AIs, based on player input
 players = dict()
@@ -24,7 +24,7 @@ for i in range(1,5):
     while not success:
         try:
             n = int(raw_input())
-            if n!=0 and n!= 1 and n!=2:
+            if n!=0 and n!= 1 and n!=2 and n!= 3 and n!= 4:
                 print("Please enter zero or one only")
             else:
                 success = True
@@ -32,11 +32,15 @@ for i in range(1,5):
             print("Please enter valid integers")
 
     if n == 0:
-        players[i] = HumanPlayer(i)
+        players[i] = HumanPlayer.HumanPlayer(i)
     if n == 1:
-        players[i] = veryStupidAIPlayer(i)
+        players[i] = Players.veryStupidAIPlayer(i)
     if n == 2:
-        players[i] = monteCarloPlayer(i)
+        players[i] = MCTSPlayers.monteCarloPlayer(i)
+    if n == 3:
+        players[i] = MaxnPlayers.impracticallyThoroughAIPlayer(i)
+    if n == 4:
+        players[i] = MaxnPlayers.xPlyAIPlayer(i)
 
 # MAIN GAME LOOP
 # Quit when curr is terminal (aka four consecutive passes have occurred)

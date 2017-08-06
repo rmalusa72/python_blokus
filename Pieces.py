@@ -12,8 +12,8 @@
 import numpy as np
 import pdb
 
-# Finds the minimum and maximum x and y in a 2xn array of points
 def findExtremes(points):
+    """Return the minimum and maximum x and y from a 2xn array of points."""
     xmin = xmax = points[0,0]
     ymin = ymax = points[1,0]
 
@@ -30,9 +30,8 @@ def findExtremes(points):
             ymax = cury
     return (xmin, xmax, ymin, ymax)
     
-# Converts each point in a 2xn array of points into a
-# 'true' at the corresponding point in a 2d array of booleans
 def toBoolArray(points):
+    """Return a 2d boolean array in the shape of the provided 2xn point array."""
     #Get min and max x and y
     xmin, xmax, ymin, ymax = findExtremes(points)
 
@@ -49,9 +48,10 @@ def toBoolArray(points):
 
     return shape
 
-# Given a 2x2n array containing n corners, returns a list containing n 2x2 arrays
-# NOTE: these will change as the piece moves! Make a copy to save them
+
 def splitCornerArray(corners):
+    """Return a list containing views of each 2x2 corner in a 2x2n array of corners"""
+    # NOTE: these will change as the piece moves! Make a copy to save them
     rtn = list()
     numCorners = corners[0].size/2
     for i in range(0, numCorners):
@@ -60,7 +60,7 @@ def splitCornerArray(corners):
     return rtn
 
 class Piece:
-    '''Generic piece type extended by specific pieces'''
+    """Generic piece type."""
 
     # r90 (bool): Does piece lack fourfold rotational symmetry?
     # r180 (bool): Does piece lack twofold rotational symmetry?
@@ -75,8 +75,8 @@ class Piece:
     # 0b010 (2) is south, 0b011 (3) is south (flipped)
     # 0b110 (6) is east, 0b111 (7) is east (flipped)
 
-    # flips piece horizontally
     def flipH(self):
+        """Flip this piece over the y-axis."""
         hflip = np.array([[-1, 0],[0,1]])
 
         # Flip corners
@@ -93,8 +93,8 @@ class Piece:
 
         self.reduceOrientation()
 
-    # flips piece vertically
     def flipV(self):
+        """Flip this piece over the x-axis."""
         vflip = np.array([[1,0],[0,-1]])
 
         # Flip corners
@@ -111,11 +111,11 @@ class Piece:
 
         self.reduceOrientation()
 
-    # rotates piece 90*turns degrees ccw
     # NOTE: rotation matrices are for cw turns bc of y axis pointing down
     # in matrix indexing
     # returns false if turns is not between one and three
     def rotate(self, turns):
+        """Rotate this piece 90*turns degrees counterclockwise."""
         if turns == 1 and self.r90:
             rmat = np.array([[0,1],[-1,0]])
             self.corners = np.dot(rmat, self.corners)
@@ -157,26 +157,24 @@ class Piece:
         else:
             return False
 
-    # Translates all coordinates in a piece by x and y
     def translate(self, x,y):
+        """Translate this piece by [x,y]."""
 
         self.shape[0] += x
         self.shape[1] += y
         self.corners[0] += x
         self.corners[1] += y
 
-    # Given an orientation (in 3-bit form explained above),
-    # flips and/or rotates this piece into that orientation
     def setOrientation(self, new_orientation):
+        """Put this piece into the provided orientation."""
         if self.orientation & 0b001 != new_orientation & 0b001:
             self.flipH()
         while self.orientation != new_orientation:
             self.rotate(1)
         self.reduceOrientation()
 
-    # checks if a given 2xn array of coordinates  matches any permutation of this piece
-    # Returns orientation that matches, or -1 if no match
     def matchingOrientation(self, compare):
+        """Return the orientation, if any, of this piece that matches the shape in compare, or -1 otherwise."""
 
         compare = toBoolArray(compare)
         boolshape = toBoolArray(self.shape)
@@ -222,9 +220,8 @@ class Piece:
                 
         return -1
 
-    # Reduces orientation to the smallest numbered orientation that is congruent
-    # considering the symmetry of the piece
     def reduceOrientation(self):
+        """Change own orientation to the smallest congruent orientation considering piece's symmetry."""
         if self.r90 and self.r180 and not self.chiral:
             if self.orientation == 1:
                 self.orientation = 0

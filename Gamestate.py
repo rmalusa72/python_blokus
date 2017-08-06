@@ -2,8 +2,8 @@
 # Contains a class representing a specific state in the game space - turn, hands,
 # board, etc. - and functions useful for setup of gamestates
 
-from Pieces import *
 from copy import deepcopy
+import Pieces
 import sys
 import numpy as np
 
@@ -11,27 +11,27 @@ import numpy as np
 # Initializes a beginning hand with one of each piece
 def initRefHand():
     rtn = dict()
-    rtn['One'] = One()
-    rtn['Two'] = Two()
-    rtn['I3'] = I3()
-    rtn['V3'] = V3()
-    rtn['I4'] = I4()
-    rtn['L4'] = L4()
-    rtn['N4'] = N4()
-    rtn['O'] = O()
-    rtn['T4'] = T4()
-    rtn['F'] = F()
-    rtn['I'] = I()
-    rtn['L'] = L()
-    rtn['N'] = N()
-    rtn['P'] = P()
-    rtn['T'] = T()
-    rtn['U'] = U()
-    rtn['V'] = V()
-    rtn['W'] = W()
-    rtn['X'] = X()
-    rtn['Y'] = Y()
-    rtn['Z'] = Z()
+    rtn['One'] = Pieces.One()
+    rtn['Two'] = Pieces.Two()
+    rtn['I3'] = Pieces.I3()
+    rtn['V3'] = Pieces.V3()
+    rtn['I4'] = Pieces.I4()
+    rtn['L4'] = Pieces.L4()
+    rtn['N4'] = Pieces.N4()
+    rtn['O'] = Pieces.O()
+    rtn['T4'] = Pieces.T4()
+    rtn['F'] = Pieces.F()
+    rtn['I'] = Pieces.I()
+    rtn['L'] = Pieces.L()
+    rtn['N'] = Pieces.N()
+    rtn['P'] = Pieces.P()
+    rtn['T'] = Pieces.T()
+    rtn['U'] = Pieces.U()
+    rtn['V'] = Pieces.V()
+    rtn['W'] = Pieces.W()
+    rtn['X'] = Pieces.X()
+    rtn['Y'] = Pieces.Y()
+    rtn['Z'] = Pieces.Z()
     return rtn
 
 def initHand():
@@ -150,7 +150,7 @@ class Gamestate:
 
         move_xmin = move[2]
         move_ymin = move[3]
-        piece_extremes = findExtremes(piece.shape)
+        piece_extremes = Pieces.findExtremes(piece.shape)
         piece_xmin, piece_ymin = piece_extremes[0], piece_extremes[2]
         xdif = move_xmin - piece_xmin
         ydif = move_ymin - piece_ymin
@@ -185,7 +185,7 @@ class Gamestate:
         bcorners = self.getCorners(self.turn)
         pcorners = piece.corners
         diagonal = False
-        for cur in splitCornerArray(pcorners):
+        for cur in Pieces.splitCornerArray(pcorners):
             inv = np.array([[cur[0,1],cur[0,0]],[cur[1,1],cur[1,0]]])
             for j in range(0, len(bcorners)):
                 if np.array_equal(bcorners[j],inv):
@@ -308,7 +308,7 @@ class Gamestate:
     # Given a 2x2n matrix of corners, update appropriate color's corner list
     def updateCorners(self, color, corners):
         oldList = self.getCorners(color)
-        for cur in splitCornerArray(corners):
+        for cur in Pieces.splitCornerArray(corners):
             inv = np.array([[cur[0,1],cur[0,0]],[cur[1,1],cur[1,0]]])
             obliterated = False
             for j in range(0, len(oldList)):
@@ -384,12 +384,12 @@ class Gamestate:
 
         rtn = list()
         bcorners = self.getCorners(self.turn)
-        piece_extremes = findExtremes(p.shape)
+        piece_extremes = Pieces.findExtremes(p.shape)
         piece_xmin, piece_ymin = piece_extremes[0], piece_extremes[2]
         
         # For each corner pc on the piece...
         pcorners = p.corners
-        for pc in splitCornerArray(pcorners):
+        for pc in Pieces.splitCornerArray(pcorners):
 
             # For each corner bc on the board...
             for bc in bcorners:
@@ -466,12 +466,12 @@ class Gamestate:
     def canFindPieceMoves(self, p):
 
         bcorners = self.getCorners(self.turn)
-        piece_extremes = findExtremes(p.shape)
+        piece_extremes = Pieces.findExtremes(p.shape)
         piece_xmin, piece_ymin = piece_extremes[0], piece_extremes[2]
         
         # For each corner pc on the piece...
         pcorners = p.corners
-        for pc in splitCornerArray(pcorners):
+        for pc in Pieces.splitCornerArray(pcorners):
 
             # For each corner bc on the board...
             for bc in bcorners:

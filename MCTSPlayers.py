@@ -1,12 +1,14 @@
 # MCTSPLAYERS.PY
 # Contains player using Monte Carlo Tree Search and its functions
 
-from Players import *
-from MCTree import *
+import Pieces
+import Gamestate
+import Players
+import MCTree
 import numpy as np
 import time
     
-class monteCarloPlayer(AIPlayer):
+class monteCarloPlayer(Players.AIPlayer):
     def getMove(self, update):
         
         # If this is the first time getMove is called,
@@ -14,7 +16,7 @@ class monteCarloPlayer(AIPlayer):
         # and set 'prev' to opening gamestate for future comparisons to
         # determine what move was made
         if not hasattr(self, 'root'):
-            self.root = MCNode(update)
+            self.root = MCTree.MCNode(update)
             self.current = self.root
             self.moves = 0
 
@@ -35,7 +37,7 @@ class monteCarloPlayer(AIPlayer):
                 else:
                     new_gamestate = self.current.gamestate.duplicate()
                     new_gamestate.update(moveMade)
-                    self.current.children[moveMade] = MCNode(new_gamestate, parent = self.current)
+                    self.current.children[moveMade] = MCTree.MCNode(new_gamestate, parent = self.current)
                     self.current = self.current.children[moveMade]
                     print(self.current.gamestate.board)
 
@@ -98,11 +100,11 @@ class monteCarloPlayer(AIPlayer):
             return "pass!"
 
         # Find coordinates that have changed
-        size = Gamestate.referenceHand[piece].size
+        size = Gamestate.Gamestate.referenceHand[piece].size
         coordinates = np.zeros((2, size), dtype = np.int)
         squaresFound = 0
-        for i in range(0, Gamestate.boardsize):
-            for j in range(0, Gamestate.boardsize):
+        for i in range(0, Gamestate.Gamestate.boardsize):
+            for j in range(0, Gamestate.Gamestate.boardsize):
                 if prev.board[i,j] == 0 and update.board[i,j] == color:
                     coordinates[0, squaresFound] = j
                     coordinates[1, squaresFound] = i
@@ -112,8 +114,8 @@ class monteCarloPlayer(AIPlayer):
             if squaresFound == size:
                 break
 
-        orientation = Gamestate.referenceHand[piece].matchingOrientation(coordinates)
-        moveExtremes = findExtremes(coordinates)
+        orientation = Gamestate.Gamestate.referenceHand[piece].matchingOrientation(coordinates)
+        moveExtremes = Pieces.findExtremes(coordinates)
         minx, miny = moveExtremes[0], moveExtremes[2]
 
         return (piece, orientation, minx, miny)
