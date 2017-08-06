@@ -414,7 +414,7 @@ class Gamestate:
         return rtn
 
 
-    # Like listMoves, but returns true as soon as it finds a single move
+    # Like listMoves, but returns as soon as it finds a single move
     def canMove(self):
         hand = self.getHand(self.turn)
         corners = self.getCorners(self.turn)
@@ -427,35 +427,41 @@ class Gamestate:
         # with findPieceMoves
         sortedHand = self.sortedHand(self.turn)
         for piece in sortedHand:
-            if self.canFindPieceMoves(piece):
-                return True
+            canFindPieceMoves = self.canFindPieceMoves(piece)
+            if not canFindPieceMoves == False:
+                return canFindPieceMoves
 
             if piece.r90 and piece.r180:
                 for i in range(3):
                     piece.rotate(1)
-                    if self.canFindPieceMoves(piece):
-                        return True                    
+                    canFindPieceMoves = self.canFindPieceMoves(piece)
+                    if not canFindPieceMoves == False:
+                        return canFindPieceMoves                  
             elif piece.r90 and not piece.r180:
                 piece.rotate(1)
-                if self.canFindPieceMoves(piece):
-                    return True
+                canFindPieceMoves = self.canFindPieceMoves(piece)
+                if not canFindPieceMoves == False:
+                    return canFindPieceMoves
                 
             if piece.chiral:
                 piece.flipV()
-                if self.canFindPieceMoves(piece):
-                    return True
+                canFindPieceMoves = self.canFindPieceMoves(piece)
+                if not canFindPieceMoves == False:
+                    return canFindPieceMoves
                 if piece.r90 and piece.r180:
                     for i in range(3):
                         piece.rotate(1)
-                        if self.canFindPieceMoves(piece):
-                            return True
+                        canFindPieceMoves = self.canFindPieceMoves(piece)
+                        if not canFindPieceMoves == False:
+                            return canFindPieceMoves
                 elif piece.r90 and not piece.r180:
                     piece.rotate(1)
-                    if self.canFindPieceMoves(piece):
-                        return True
+                    canFindPieceMoves = self.canFindPieceMoves(piece)
+                    if not canFindPieceMoves == False:
+                        return canFindPieceMoves
         return False
 
-    # canMove's equivalent of findPieceMoves (returns True as soon as it
+    # canMove's equivalent of findPieceMoves (returns as soon as it
     # finds a single move)
     def canFindPieceMoves(self, p):
 
@@ -485,7 +491,7 @@ class Gamestate:
                     
                     # Now check if move is appropriate
                     if not self.moveConflicts(p):
-                        return True
+                        return (p.name, p.orientation, piece_xmin, piece_ymin) 
 
         return False
 

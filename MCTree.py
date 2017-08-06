@@ -51,13 +51,11 @@ class MCNode():
                 unexplored_moves.remove(move)
             except ValueError:
                 pdb.set_trace()
+        print("Moves remaining:")
+        print(unexplored_moves)
+        print("Testing:")
         randMove = random.choice(unexplored_moves)
         print(randMove)
-
-        print("expanding")
-        print(self.gamestate.board)
-        print("picking from")
-        print(unexplored_moves)
         
         # Expand
         new_gamestate = self.gamestate.duplicate()

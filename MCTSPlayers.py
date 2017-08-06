@@ -62,7 +62,7 @@ class monteCarloPlayer(AIPlayer):
         while time.time() - start_time < 600:
             self.mcIteration()
 
-        self.root.printTree()
+        self.current.printTree()
         
         # And pick best move
 

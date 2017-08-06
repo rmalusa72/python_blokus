@@ -22,8 +22,11 @@ class AIPlayer(Player):
 
 class veryStupidAIPlayer(AIPlayer):
     def getMove(self, update):
-        moves = update.listMoves()
-        return moves[0]
+        move = update.canMove()
+        if move != False:
+            return move
+        else:
+            return 'pass!'
 
 # Calculate a vector w/utility for each player in a terminal gamestate
 # where 0 is in a tie, -1 is a loss, and 1 is a win

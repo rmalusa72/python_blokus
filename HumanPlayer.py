@@ -16,7 +16,7 @@ class HumanPlayer(Player):
         print("Player" + str(self.color) + ", your hand contains:")
         update.printSortedHand(self.color)
 
-        if update.canMove():
+        if update.canMove() != False:
 
             gotvalidmove = False
             piece_orientation = -1
