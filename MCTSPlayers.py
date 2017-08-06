@@ -16,6 +16,7 @@ class monteCarloPlayer(AIPlayer):
         if not hasattr(self, 'root'):
             self.root = MCNode(update)
             self.current = self.root
+            self.moves = 0
 
         # Otherwise, determine which moves have been made by each player in order to
         # move 'current' down the tree to the node corresponding to update
@@ -28,17 +29,12 @@ class monteCarloPlayer(AIPlayer):
                 # Find move made by player, then move down tree to corresponding
                 # node, or create it if necessary
                 moveMade = self.findMoveMade(self.current.gamestate, update, colorToCheck)
-                print(moveMade)
                 
                 if moveMade in self.current.children:
-                    print("child already exists")
                     self.current = self.current.children[moveMade]
                 else:
-                    print("making new child")
                     new_gamestate = self.current.gamestate.duplicate()
                     new_gamestate.update(moveMade)
-                    print("updated gamestate")
-                    print(new_gamestate.board)
                     self.current.children[moveMade] = MCNode(new_gamestate, parent = self.current)
                     self.current = self.current.children[moveMade]
                     print(self.current.gamestate.board)
@@ -59,14 +55,14 @@ class monteCarloPlayer(AIPlayer):
         # Then repeat Monte Carlo iterations until you run out of time
 
         start_time = time.time()
-        while time.time() - start_time < 1800:
+        while (time.time() - start_time < 30):
             self.mcIteration()
 
         self.current.printTree()
         
         # And pick best move
 
-        move = self.highestUCBMove(self.current)
+        move = self.highestAvgPlayoutMove(self.current)
 
         # Update tree to reflect path taken
         if move in self.current.children:
@@ -82,6 +78,7 @@ class monteCarloPlayer(AIPlayer):
         print(move)
         print("self.current.gamestate.board:")
         print(self.current.gamestate.board)
+        self.moves = self.moves + 1 
         return(move)
         
     # Given a gamestate and a following gamestate, find what move (if any)
@@ -142,6 +139,19 @@ class monteCarloPlayer(AIPlayer):
             node = node.parent
             node.updateStats(result)
 
+    # Given an MCNode, returns the move corresponding to its child with the highest
+    # average playout
+    def highestAvgPlayoutMove(self, node):
+        color = node.gamestate.turn
+        highestAvg = -1
+        highestAvgMove = None
+        for move, child in node.children.items():
+            currNodeAvg = child.wins[color-1]/(child.playouts*1.0)
+            if currNodeAvg > highestAvg:
+                highestAvg = currNodeAvg
+                highestAvgMove = move
+        return highestAvgMove
+            
     # Given an MCNode, returns the move corresponding to its child with the highest
     # upper confidence bound (for the player at that node)
     def highestUCBMove(self, node):

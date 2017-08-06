@@ -14,6 +14,9 @@ def weightedRandomMove(moves):
         if move != 'pass!':
             for i in range(0, Gamestate.referenceHand[move[0]].size):
                 weightedlist.append(move)
+        else:
+            weightedlist.append('pass!')
+                
     return random.choice(weightedlist)
 
 
@@ -61,6 +64,11 @@ class MCNode():
     # updates fullyExpanded to true if all children have been explored, and returns
     # results of simulation
     def expand(self):
+
+        if self.gamestate.isTerminal():
+            utilityVector = utility(self.gamestate)
+            self.updateStats(utilityVector)
+            return utilityVector
         
         unexplored_moves = self.gamestate.listMoves()
         for move, child in self.children.items():
