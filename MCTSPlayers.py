@@ -59,7 +59,7 @@ class monteCarloPlayer(AIPlayer):
         # Then repeat Monte Carlo iterations until you run out of time
 
         start_time = time.time()
-        while time.time() - start_time < 10:
+        while time.time() - start_time < 600:
             self.mcIteration()
 
         self.root.printTree()
@@ -130,7 +130,7 @@ class monteCarloPlayer(AIPlayer):
         node = self.current
         canStep = self.ucbStep(node)
         while not canStep == False:
-            node = canStep
+            node = nocd.children[canStep]
             canStep = self.ucbStep(node)
 
         # Then expand that node, saving the result (utility vector) of
