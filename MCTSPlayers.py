@@ -59,9 +59,10 @@ class monteCarloPlayer(AIPlayer):
         # Then repeat Monte Carlo iterations until you run out of time
 
         start_time = time.time()
-        while time.time() - start_time < 600:
+        while time.time() - start_time < 1800:
             self.mcIteration()
-            self.current.printTree()
+
+        self.current.printTree()
         
         # And pick best move
 

@@ -6,7 +6,17 @@ from Players import *
 import sys
 import random
 import pdb
-    
+
+# Picks a random move from a list, but weights choice by size of each piece
+def weightedRandomMove(moves):
+    weightedlist = list()
+    for move in moves:
+        if move != 'pass!':
+            for i in range(0, Gamestate.referenceHand[move[0]].size):
+                weightedlist.append(move)
+    return random.choice(weightedlist)
+
+
 class MCNode():
 
     def __init__(self, gamestate, parent = None, fullyExpanded = False, playouts = 0):
@@ -61,7 +71,7 @@ class MCNode():
         print("Moves remaining:")
         print(unexplored_moves)
         print("Testing:")
-        randMove = random.choice(unexplored_moves)
+        randMove = weightedRandomMove(unexplored_moves)
         print(randMove)
         
         # Expand
