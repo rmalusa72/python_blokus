@@ -13,16 +13,13 @@ class monteCarloPlayer(Players.AIPlayer):
         
         # If this is the first time getMove is called,
         # initialize 'root' and 'current' to node w/ opening gamestate
-        # and set 'prev' to opening gamestate for future comparisons to
-        # determine what move was made
         if not hasattr(self, 'root'):
-            self.root = MCTree.MCNode(update)
+            self.root = MCTree.MCNode(Gamestate.Gamestate())
             self.current = self.root
-            self.moves = 0
 
-        # Otherwise, determine which moves have been made by each player in order to
+        # Determine which moves have been made by each player in order to
         # move 'current' down the tree to the node corresponding to update
-        else:
+        if not self.current is self.root:
             colorToCheck = self.color + 1
             if colorToCheck == 5:
                 colorToCheck = 1
@@ -31,7 +28,7 @@ class monteCarloPlayer(Players.AIPlayer):
                 # Find move made by player, then move down tree to corresponding
                 # node, or create it if necessary
                 moveMade = self.findMoveMade(self.current.gamestate, update, colorToCheck)
-                
+
                 if moveMade in self.current.children:
                     self.current = self.current.children[moveMade]
                 else:
@@ -39,20 +36,13 @@ class monteCarloPlayer(Players.AIPlayer):
                     new_gamestate.update(moveMade)
                     self.current.children[moveMade] = MCTree.MCNode(new_gamestate, parent = self.current)
                     self.current = self.current.children[moveMade]
-                    print(self.current.gamestate.board)
 
-                print(self.current.gamestate.board)
-                    
                 # Go to next player in order
                 colorToCheck = colorToCheck + 1
                 if colorToCheck == 5:
                     colorToCheck = 1
                 if colorToCheck == self.color:
                     break
-
-
-        print("self.current.gamestate.board in getmove:")
-        print(self.current.gamestate.board)
                 
         # Then repeat Monte Carlo iterations until you run out of time
 
@@ -80,7 +70,6 @@ class monteCarloPlayer(Players.AIPlayer):
         print(move)
         print("self.current.gamestate.board:")
         print(self.current.gamestate.board)
-        self.moves = self.moves + 1 
         return(move)
         
     # Given a gamestate and a following gamestate, find what move (if any)
