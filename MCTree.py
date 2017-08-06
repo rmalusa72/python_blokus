@@ -20,6 +20,7 @@ class MCNode():
     # Prints the tree rooted at this node
     def printTree(self):
         print("root")
+        print(self.gamestate.board)
         self.printTreeRec(1)
         
     # Recursive helper method for printTree
@@ -28,6 +29,7 @@ class MCNode():
             for i in range(0, indent):
                 sys.stdout.write("\t")
             print(move)
+            print(child.gamestate.board)
             child.printTreeRec(indent + 1)
 
     # Given a utility vector for a terminal gamestate descended from this node,
@@ -42,7 +44,7 @@ class MCNode():
     # updates fullyExpanded to true if all children have been explored, and returns
     # results of simulation
     def expand(self):
-
+        
         unexplored_moves = self.gamestate.listMoves()
         for move, child in self.children.items():
             try:
@@ -51,6 +53,11 @@ class MCNode():
                 pdb.set_trace()
         randMove = random.choice(unexplored_moves)
         print(randMove)
+
+        print("expanding")
+        print(self.gamestate.board)
+        print("picking from")
+        print(unexplored_moves)
         
         # Expand
         new_gamestate = self.gamestate.duplicate()
@@ -74,14 +81,15 @@ class MCNode():
     # Simulates a random game starting from self's gamestate, and returns
     # the outcome as a vector of utility
     def simulateGame(self):
+
+        print("Simulating random game..")
+
         # Simulate game 
         gamestate = self.gamestate.duplicate()
         while not gamestate.isTerminal():
             moves = gamestate.listMoves()
             randMove = random.choice(moves)
-            print(randMove)
             gamestate.update(randMove)
-            print(gamestate.board)
             
         # Update playout and win count in self
         utility_vector = utility(gamestate)

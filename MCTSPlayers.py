@@ -16,7 +16,6 @@ class monteCarloPlayer(AIPlayer):
         if not hasattr(self, 'root'):
             self.root = MCNode(update)
             self.current = self.root
-            self.prev = update
 
         # Otherwise, determine which moves have been made by each player in order to
         # move 'current' down the tree to the node corresponding to update
@@ -28,45 +27,61 @@ class monteCarloPlayer(AIPlayer):
 
                 # Find move made by player, then move down tree to corresponding
                 # node, or create it if necessary
-                moveMade = self.findMoveMade(self.prev, update, colorToCheck)
-                new_gamestate = self.prev.duplicate()
-                new_gamestate.update(moveMade)
+                moveMade = self.findMoveMade(self.current.gamestate, update, colorToCheck)
+                print(moveMade)
                 
                 if moveMade in self.current.children:
+                    print("child already exists")
                     self.current = self.current.children[moveMade]
                 else:
+                    print("making new child")
+                    new_gamestate = self.current.gamestate.duplicate()
+                    new_gamestate.update(moveMade)
+                    print("updated gamestate")
+                    print(new_gamestate.board)
                     self.current.children[moveMade] = MCNode(new_gamestate, parent = self.current)
                     self.current = self.current.children[moveMade]
+                    print(self.current.gamestate.board)
 
+                print(self.current.gamestate.board)
+                    
                 # Go to next player in order
                 colorToCheck = colorToCheck + 1
                 if colorToCheck == 5:
                     colorToCheck = 1
                 if colorToCheck == self.color:
                     break
-        
+
+
+        print("self.current.gamestate.board in getmove:")
+        print(self.current.gamestate.board)
+                
         # Then repeat Monte Carlo iterations until you run out of time
 
         start_time = time.time()
-        while time.time() - start_time < 60:
+        while time.time() - start_time < 10:
             self.mcIteration()
 
         self.root.printTree()
         
         # And pick best move
 
-        move = 'pass!'
-
+        move = self.highestUCBMove(self.current)
 
         # Update tree to reflect path taken
-        self.prev = update
         if move in self.current.children:
             self.current = self.current.children[move]
         else:
-            self.current.children[move] = MCNode(move, parent = self.current)
+            new_gamestate = self.current.duplicate()
+            new_gamestate.update(move)
+            self.current.children[move] = MCNode(new_gamestate, parent = self.current)
             self.current = self.current.children[move]
 
         # Then return the move to make
+        print("MAKING MOVE:")
+        print(move)
+        print("self.current.gamestate.board:")
+        print(self.current.gamestate.board)
         return(move)
         
     # Given a gamestate and a following gamestate, find what move (if any)
@@ -127,27 +142,32 @@ class monteCarloPlayer(AIPlayer):
             node = node.parent
             node.updateStats(result)
 
+    # Given an MCNode, returns the move corresponding to its child with the highest
+    # upper confidence bound (for the player at that node)
+    def highestUCBMove(self, node):
+        color = node.gamestate.turn
+        highestUCB = -1
+        highestUCBMove = None
+        for move, child in node.children.items():
+            # The upper confidence bound of a node is
+            # xi + sqrt(2*ln(n)/ni)
+            # where n is total playouts from current gamestate,
+            # ni = total playouts from node i,
+            # wi = total wins from node i for player color, 
+            # and xi = average payout for node i (wi/ni)
+            currNodeUCB = (child.wins[color-1]/(child.playouts*1)
+                           + np.sqrt(2 * np.log(self.current.playouts)
+                                     / (child.playouts * 1.0)))
+            if currNodeUCB > highestUCB:
+                highestUCB = currNodeUCB
+                highestUCBMove = move
+        return highestUCBMove
+            
     # Given an MCNode, returns the move corresponding to the child with the highest
     # upper confidence bound (for the player at that node)
     # if all children have been explored, or false otherwise
     def ucbStep(self, node):
         if node.fullyExpanded:
-            color = node.gamestate.turn
-            highestUCB = -1
-            highestUCBMove = None
-            for move, child in node.children:
-                # The upper confidence bound of a node is
-                # xi + sqrt(2*ln(n)/ni)
-                # where n is total playouts from current gamestate,
-                # ni = total playouts from node i,
-                # wi = total wins from node i for player color, 
-                # and xi = average payout for node i (wi/ni)
-                currNodeUCB = (child.wins[color-1]/(child.playouts*1)
-                               + np.sqrt(2 * np.log(current.playouts)
-                                         / (child.playouts * 1.0)))
-                if currNodeUCB > highestUCB:
-                    highestUCB = currNodeUCB
-                    highestUCBMove = move
-            return highestUCBMove
+            return self.highestUCBMove(node)
         else:
             return False
