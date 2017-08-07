@@ -1,23 +1,12 @@
 # MCTREE.PY
 # Contains node for Monte Carlo search tree and related functions
 
-from Gamestate import *
-from Players import *
+import Gamestate
+import Players
+import BlokusFunctions as bfn
 import sys
 import random
 import pdb
-
-def weightedRandomMove(moves):
-    """Return a random move from moves, weighted by piece size."""
-    weightedlist = list()
-    for move in moves:
-        if move != 'pass!':
-            for i in range(0, Gamestate.Gamestate.referenceHand[move[0]].size):
-                weightedlist.append(move)
-        else:
-            weightedlist.append('pass!')
-                
-    return random.choice(weightedlist)
 
 class MCNode():
 
@@ -60,7 +49,7 @@ class MCNode():
     def expand(self):
         """Expand a random unvisited child from node, play out simulation, update stats, and return utility vector result."""
         if self.gamestate.isTerminal():
-            utilityVector = utility(self.gamestate)
+            utilityVector = Players.utility(self.gamestate)
             self.updateStats(utilityVector)
             return utilityVector
         
@@ -73,7 +62,7 @@ class MCNode():
         print("Moves remaining:")
         print(unexplored_moves)
         print("Testing:")
-        randMove = weightedRandomMove(unexplored_moves)
+        randMove = Players.weightedRandomMove(unexplored_moves)
         print(randMove)
         
         # Expand
@@ -108,7 +97,7 @@ class MCNode():
             gamestate.update(randMove)
             
         # Update playout and win count in self
-        utility_vector = utility(gamestate)
+        utility_vector = Players.utility(gamestate)
         self.updateStats(utility_vector)
 
         # Return utility vector for backpropagation
@@ -122,11 +111,11 @@ class MCNode():
         gamestate = self.gamestate.duplicate()
         while not gamestate.isTerminal():
             moves = gamestate.listMoves()
-            randMove = weightedRandomMove(moves)
+            randMove = Players.weightedRandomMove(moves)
             gamestate.update(randMove)
             
         # Update playout and win count in self
-        utility_vector = utility(gamestate)
+        utility_vector = Players.utility(gamestate)
         self.updateStats(utility_vector)
 
         # Return utility vector for backpropagation
@@ -146,7 +135,7 @@ class MCNode():
                 gamestate.update('pass!')
 
         # Update playout and win count in self
-        utility_vector = utility(gamestate)
+        utility_vector = Players.utility(gamestate)
         self.updateStats(utility_vector)
 
         # Return utility vector for backpropagation

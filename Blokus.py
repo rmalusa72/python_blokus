@@ -68,5 +68,4 @@ curr.printScores()
 
 # Temporarily here - write monte carlo search tree from persistent player at game end
 for i in range(1,5):
-    if isinstance(players[i], MCTSPlayers.persistentMCPlayer):
-        players[i].writeTree()
+    players[i].close()

@@ -3,6 +3,7 @@
 
 import numpy as np
 import pdb
+import random
 import Gamestate
 import Pieces
 
@@ -11,10 +12,13 @@ class Player:
     def __init__(self, color):
         self.color = color
 
-    # when provided updated gamestate, return move
     def getMove(self, update):
-        # implement
+        """When provided a gamestate update, return move"""
         return list()
+
+    def close(self):
+        """Perform closing tasks for this AI."""
+        pass
         
 class AIPlayer(Player):
     """Abstract AI player class."""
@@ -78,3 +82,14 @@ def expandFromList(gamestate, moves):
         children.append(new_gamestate)
     return children
 
+def weightedRandomMove(moves):
+    """Return a random move from moves, weighted by piece size."""
+    weightedlist = list()
+    for move in moves:
+        if move != 'pass!':
+            for i in range(0, Gamestate.Gamestate.referenceHand[move[0]].size):
+                weightedlist.append(move)
+        else:
+            weightedlist.append('pass!')
+                
+    return random.choice(weightedlist)

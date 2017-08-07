@@ -174,7 +174,7 @@ class monteCarloPlayer(Players.AIPlayer):
 
 class persistentMCPlayer(monteCarloPlayer):
 
-    shouldReadTree = True
+    shouldReadTree = False
     
     def getMove(self, update):
         """Prompted with gamestate, return move chosen by MCTS with tree loaded from file."""

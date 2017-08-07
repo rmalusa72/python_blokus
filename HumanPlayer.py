@@ -9,7 +9,7 @@ import numpy as np
 
 class HumanPlayer(Players.Player):
     """Human player class."""
-
+    
     def __init__(self, color):
         self.color = color
         self.referenceHand = Gamestate.initRefHand()
