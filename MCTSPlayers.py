@@ -191,7 +191,60 @@ class persistentMonteCarloPlayer(monteCarloPlayer):
                 self.root = MCTree.MCNode(Gamestate.Gamestate())
             self.current = self.root
 
+        # Determine which moves have been made by each player in order to
+        # move 'current' down the tree to the node corresponding to update
+        if not self.current.gamestate.equals(update):
+            colorToCheck = self.color + 1
+            if colorToCheck == 5:
+                colorToCheck = 1
+            while True:
+
+                # Find move made by player, then move down tree to corresponding
+                # node, or create it if necessary
+                moveMade = self.findMoveMade(self.current.gamestate, update, colorToCheck)
+
+                if moveMade in self.current.children:
+                    self.current = self.current.children[moveMade]
+                else:
+                    new_gamestate = self.current.gamestate.duplicate()
+                    new_gamestate.update(moveMade)
+                    self.current.children[moveMade] = MCTree.MCNode(new_gamestate, parent = self.current)
+                    self.current = self.current.children[moveMade]
+
+                # Go to next player in order
+                colorToCheck = colorToCheck + 1
+                if colorToCheck == 5:
+                    colorToCheck = 1
+                if colorToCheck == self.color:
+                    break
+                
+        # Then repeat Monte Carlo iterations until you run out of time
+
+        start_time = time.time()
+        while (time.time() - start_time < 30):
+            self.mcIteration()
+
+        self.current.printTree()
         
+        # And pick best move
+
+        move = self.highestAvgPlayoutMove(self.current)
+
+        # Update tree to reflect path taken
+        if move in self.current.children:
+            self.current = self.current.children[move]
+        else:
+            new_gamestate = self.current.duplicate()
+            new_gamestate.update(move)
+            self.current.children[move] = MCNode(new_gamestate, parent = self.current)
+            self.current = self.current.children[move]
+
+        # Then return the move to make
+        print("MAKING MOVE:")
+        print(move)
+        print("self.current.gamestate.board:")
+        print(self.current.gamestate.board)
+        return(move)
             
 
     # A single runthrough/expansion/playout of the Monte Carlo search tree
