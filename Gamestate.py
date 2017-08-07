@@ -4,6 +4,7 @@
 
 from copy import deepcopy
 import Pieces
+import BlokusFunctions as bfn
 import sys
 import numpy as np
 
@@ -193,7 +194,7 @@ class Gamestate:
 
         move_xmin = move[2]
         move_ymin = move[3]
-        piece_extremes = Pieces.findExtremes(piece.shape)
+        piece_extremes = bfn.findExtremes(piece.shape)
         piece_xmin, piece_ymin = piece_extremes[0], piece_extremes[2]
         xdif = move_xmin - piece_xmin
         ydif = move_ymin - piece_ymin
@@ -228,7 +229,7 @@ class Gamestate:
         bcorners = self.getCorners(self.turn)
         pcorners = piece.corners
         diagonal = False
-        for cur in Pieces.splitCornerArray(pcorners):
+        for cur in bfn.splitCornerArray(pcorners):
             inv = np.array([[cur[0,1],cur[0,0]],[cur[1,1],cur[1,0]]])
             for j in range(0, len(bcorners)):
                 if np.array_equal(bcorners[j],inv):
@@ -350,7 +351,7 @@ class Gamestate:
     def updateCorners(self, color, corners):
         """Update color's corner list with provided 2x2n corner matrix."""
         oldList = self.getCorners(color)
-        for cur in Pieces.splitCornerArray(corners):
+        for cur in bfn.splitCornerArray(corners):
             inv = np.array([[cur[0,1],cur[0,0]],[cur[1,1],cur[1,0]]])
             obliterated = False
             for j in range(0, len(oldList)):
@@ -425,12 +426,12 @@ class Gamestate:
         
         rtn = list()
         bcorners = self.getCorners(self.turn)
-        piece_extremes = Pieces.findExtremes(p.shape)
+        piece_extremes = bfn.findExtremes(p.shape)
         piece_xmin, piece_ymin = piece_extremes[0], piece_extremes[2]
         
         # For each corner pc on the piece...
         pcorners = p.corners
-        for pc in Pieces.splitCornerArray(pcorners):
+        for pc in bfn.splitCornerArray(pcorners):
 
             # For each corner bc on the board...
             for bc in bcorners:
@@ -505,12 +506,12 @@ class Gamestate:
         """Return first legal move found for piece p in current orientation."""
 
         bcorners = self.getCorners(self.turn)
-        piece_extremes = Pieces.findExtremes(p.shape)
+        piece_extremes = bfn.findExtremes(p.shape)
         piece_xmin, piece_ymin = piece_extremes[0], piece_extremes[2]
         
         # For each corner pc on the piece...
         pcorners = p.corners
-        for pc in Pieces.splitCornerArray(pcorners):
+        for pc in bfn.splitCornerArray(pcorners):
 
             # For each corner bc on the board...
             for bc in bcorners:

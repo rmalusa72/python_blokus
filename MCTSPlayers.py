@@ -5,6 +5,7 @@ import Pieces
 import Gamestate
 import Players
 import MCTree
+import BlokusFunctions as bfn
 import numpy as np
 import time
 import cPickle as pickle
@@ -105,7 +106,7 @@ class monteCarloPlayer(Players.AIPlayer):
                 break
 
         orientation = Gamestate.Gamestate.referenceHand[piece].matchingOrientation(coordinates)
-        moveExtremes = Pieces.findExtremes(coordinates)
+        moveExtremes = bfn.findExtremes(coordinates)
         minx, miny = moveExtremes[0], moveExtremes[2]
 
         return (piece, orientation, minx, miny)

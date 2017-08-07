@@ -4,6 +4,7 @@
 import Players
 import Gamestate
 import Pieces
+import BlokusFunctions as bfn
 import numpy as np
 
 class HumanPlayer(Players.Player):
@@ -59,7 +60,7 @@ class HumanPlayer(Players.Player):
                     print("Those coordinates do not match that piece's shape")
                     continue
 
-                move_extremes = Pieces.findExtremes(coords)
+                move_extremes = bfn.findExtremes(coords)
                 move_xmin, move_ymin = move_extremes[0], move_extremes[2]
                 gotvalidmove = True
 

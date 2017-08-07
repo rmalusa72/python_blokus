@@ -19,7 +19,6 @@ def weightedRandomMove(moves):
                 
     return random.choice(weightedlist)
 
-
 class MCNode():
 
     def __init__(self, gamestate, parent = None, fullyExpanded = False, playouts = 0):
