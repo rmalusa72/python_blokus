@@ -29,7 +29,7 @@ class MCNode():
         self.fullyExpanded = False
         self.playouts = playouts
         self.wins = [0,0,0,0]
-
+        
     # Prints the tree rooted at this node
     def printTree(self):
         print("root")

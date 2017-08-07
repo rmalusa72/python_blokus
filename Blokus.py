@@ -24,7 +24,7 @@ for i in range(1,5):
     while not success:
         try:
             n = int(raw_input())
-            if n!=0 and n!= 1 and n!=2 and n!= 3 and n!= 4:
+            if n!=0 and n!= 1 and n!=2 and n!= 3 and n!= 4 and n!=5:
                 print("Please enter zero or one only")
             else:
                 success = True
@@ -41,6 +41,8 @@ for i in range(1,5):
         players[i] = MaxnPlayers.impracticallyThoroughAIPlayer(i)
     if n == 4:
         players[i] = MaxnPlayers.xPlyAIPlayer(i)
+    if n == 5:
+        players[i] = MCTSPlayers.persistentMonteCarloPlayer(i)
 
 # MAIN GAME LOOP
 # Quit when curr is terminal (aka four consecutive passes have occurred)
@@ -63,3 +65,8 @@ while not curr.isTerminal():
             print("Invalid move!") 
 
 curr.printScores()
+
+# Temporarily here - write monte carlo search tree from persistent player at game end
+for i in range(1,5):
+    if isinstance(players[i], MCTSPlayers.persistentMonteCarloPlayer):
+        players[i].writeTree()

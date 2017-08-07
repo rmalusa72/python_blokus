@@ -88,26 +88,66 @@ class Gamestate:
 
     # Makes a gamestate with given parameters, or a beginning gamestate if
     # no parameters
-    def __init__(self, blue = initHand(), yellow = initHand(), red = initHand(),
-                 green = initHand(),
-                 bcorners = startCorner(1),
-                 ycorners = startCorner(2),
-                 rcorners = startCorner(3),
-                 gcorners = startCorner(4),
-                 board = initBoard(), turn = 1, passCount = 0,
-                 lastPlayed = [None, None, None, None]):
-        self.blue = blue
-        self.yellow = yellow
-        self.red = red
-        self.green = green
-        self.bcorners = bcorners
-        self.ycorners = ycorners
-        self.rcorners = rcorners
-        self.gcorners = gcorners
-        self.board = board
+    def __init__(self, blue = 'default', yellow = 'default', red = 'default',
+                 green = 'default',
+                 bcorners = 'default',
+                 ycorners = 'default',
+                 rcorners = 'default',
+                 gcorners = 'default',
+                 board = 'default', turn = 1, passCount = 0,
+                 lastPlayed = 'default'):
+        if blue == 'default':
+            self.blue = initHand()
+        else:
+            self.blue = blue
+            
+        if yellow == 'default':
+            self.yellow = initHand()
+        else:
+            self.yellow = yellow
+
+        if red == 'default':
+            self.red = initHand()
+        else:
+            self.red = red
+
+        if green == 'default':
+            self.green = initHand()
+        else:
+            self.green = green
+
+        if bcorners == 'default':
+            self.bcorners = startCorner(1)
+        else:
+            self.bcorners = bcorners
+
+        if ycorners == 'default':
+            self.ycorners = startCorner(2)
+        else:
+            self.ycorners = ycorners
+
+        if rcorners == 'default':
+            self.rcorners = startCorner(3)
+        else:
+            self.rcorners = rcorners
+
+        if gcorners == 'default':
+            self.gcorners = startCorner(4)
+        else:
+            self.gcorners = gcorners
+
+        if board == 'default':
+            self.board = initBoard()
+        else:
+            self.board = board
+            
         self.turn = turn
         self.passCount = passCount
-        self.lastPlayed = lastPlayed
+
+        if lastPlayed == 'default':
+            self.lastPlayed = [None, None, None, None]
+        else:
+            self.lastPlayed = lastPlayed
 
     # Returns a deep copy of self  
     def duplicate(self):
@@ -125,6 +165,13 @@ class Gamestate:
         lastPlayed = deepcopy(self.lastPlayed)
         return Gamestate(blue, yellow, red, green, bcorners, ycorners, rcorners,
                          gcorners, board, turn, passCount, lastPlayed)
+
+    # Returns whether this gamestate has same board/turn as another gamestate
+    def equals(self, other):
+        if self.turn != other.turn:
+            return False
+        return np.array_equal(self.board, other.board)
+    
 
     # Updates gamestate with provided move if it is legal,
     # or else returns False
@@ -546,4 +593,3 @@ class Gamestate:
         for p in sortedhand:
             sys.stdout.write(p.name + ' ')
         sys.stdout.write("\n")
-    
