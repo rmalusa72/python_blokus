@@ -1,6 +1,5 @@
 # PLAYERS.PY
-# Contains an abstract player class and human and AI variants with their own
-# getMove functions
+# Contains an abstract player class and some functions used by it
 
 import numpy as np
 import pdb
@@ -8,6 +7,7 @@ import Gamestate
 import Pieces
 
 class Player:
+    """Abstract player class."""
     def __init__(self, color):
         self.color = color
 
@@ -17,11 +17,13 @@ class Player:
         return list()
         
 class AIPlayer(Player):
+    """Abstract AI player class."""
     def getMove(self, update):
         #IMPLEMENT THIS
         return list()
 
 class veryStupidAIPlayer(AIPlayer):
+    """AI player who makes first move it sees."""
     def getMove(self, update):
         move = update.canMove()
         if move != False:
@@ -29,9 +31,8 @@ class veryStupidAIPlayer(AIPlayer):
         else:
             return 'pass!'
 
-# Calculate a vector w/utility for each player in a terminal gamestate
-# where 0 is in a tie, -1 is a loss, and 1 is a win
 def utility(gamestate):
+    """Returns a utility vector for a gamestate where 0 is tie, -1 is loss, 1 is win."""
     utilityVector = [-1,-1,-1,-1]
     scores = gamestate.getScores()
     hasHighest = [False,False,False,False]
@@ -58,8 +59,8 @@ def utility(gamestate):
 
     return utilityVector  
 
-# Expands a given gamestate to a list of children
 def expand(gamestate):
+    """Expand a gamestate to a list of children."""
     children = list()
     moves = gamestate.listMoves()
     for move in moves:
@@ -68,8 +69,8 @@ def expand(gamestate):
         children.append(new_gamestate)
     return children
 
-# Expands a given gamestate to a list of children (given a list of moves)
 def expandFromList(gamestate, moves):
+    """Given a list of moves, expand gamestate to corresponding list of children."""
     children = list()
     for move in moves:
         new_gamestate = gamestate.duplicate()

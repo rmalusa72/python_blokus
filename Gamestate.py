@@ -7,9 +7,8 @@ import Pieces
 import sys
 import numpy as np
 
-
-# Initializes a beginning hand with one of each piece
 def initRefHand():
+    """Return a reference hand with one of each piece."""
     rtn = dict()
     rtn['One'] = Pieces.One()
     rtn['Two'] = Pieces.Two()
@@ -35,6 +34,7 @@ def initRefHand():
     return rtn
 
 def initHand():
+    """Return an initial hand with all pieces set to True."""
     rtn = dict()
     rtn['One'] = True
     rtn['Two'] = True
@@ -59,35 +59,32 @@ def initHand():
     rtn['Z'] = True
     return rtn
 
-# Initializes a list with the starting corner for a given player
 def startCorner(color):
-    boardsize = 20
+    """Return a list with the starting corner for the given color."""
+    # NOTE: At some point this should be changed so play order goes clockwise.
     corners = list()
     if color == 1:
         corners.append(np.array([[-1,0],[-1,0]]))
     if color == 2:
-        corners.append(np.array([[-1,0],[boardsize, boardsize-1]]))
+        corners.append(np.array([[-1,0],[Gamestate.boardsize, Gamestate.boardsize-1]]))
     if color == 3:
-        corners.append(np.array([[boardsize, boardsize-1],
-                                 [boardsize, boardsize-1]]))
+        corners.append(np.array([[Gamestate.boardsize, Gamestate.boardsize-1],
+                                 [Gamestate.boardsize, Gamestate.boardsize-1]]))
     if color == 4:
-        corners.append(np.array([[boardsize, boardsize-1],[-1,0]]))
+        corners.append(np.array([[Gamestate.boardsize, Gamestate.boardsize-1],[-1,0]]))
     return corners
 
-# Initializes an empty board of size boardSize
 def initBoard():
-    boardSize = 20
-    board = np.zeros((boardSize,boardSize),dtype=int)
+    """Returns an empty board"""
+    board = np.zeros((Gamestate.boardsize,Gamestate.boardsize),dtype=int)
     return board
 
 class Gamestate:
-    '''Represents a game state in Blokus, with hands and board'''
+    """A game state in Blokus, with hands, board, turn etc."""
 
     referenceHand = initRefHand()
     boardsize = 20
 
-    # Makes a gamestate with given parameters, or a beginning gamestate if
-    # no parameters
     def __init__(self, blue = 'default', yellow = 'default', red = 'default',
                  green = 'default',
                  bcorners = 'default',
@@ -96,6 +93,8 @@ class Gamestate:
                  gcorners = 'default',
                  board = 'default', turn = 1, passCount = 0,
                  lastPlayed = 'default'):
+        """ Initialize a gamestate with given parameters, or a default gamestate if none are provided."""
+        
         if blue == 'default':
             self.blue = initHand()
         else:
@@ -149,8 +148,8 @@ class Gamestate:
         else:
             self.lastPlayed = lastPlayed
 
-    # Returns a deep copy of self  
     def duplicate(self):
+        """Return a deep copy of this gamestate object."""
         blue = deepcopy(self.blue)
         yellow = deepcopy(self.yellow)
         red = deepcopy(self.red)
@@ -166,17 +165,14 @@ class Gamestate:
         return Gamestate(blue, yellow, red, green, bcorners, ycorners, rcorners,
                          gcorners, board, turn, passCount, lastPlayed)
 
-    # Returns whether this gamestate has same board/turn as another gamestate
     def equals(self, other):
+        """Return true if this gamestate has the same board/turn as other, false otherwise."""
         if self.turn != other.turn:
             return False
         return np.array_equal(self.board, other.board)
     
-
-    # Updates gamestate with provided move if it is legal,
-    # or else returns False
     def update(self, move):
-
+        """Update gamestate with provided move if legal, else return False"""
         if len(move) != 4: # Then move is a pass
             self.setLastPlayed(None, self.turn)
             self.passCount = self.passCount + 1
@@ -225,8 +221,8 @@ class Gamestate:
         # Advance turn
         self.advanceTurn()
         
-    # Returns whether a move (as oriented and located piece) is valid
     def moveCheck(self, piece):
+        """Return whether a move is legal."""
         
         # Check if one of piece's corners matches an open corner on the board
         bcorners = self.getCorners(self.turn)
@@ -250,9 +246,8 @@ class Gamestate:
             return True
         return False
 
-    # Checks whether a piece conflicts (overlaps or edge adacent with)
-    # anything already on board
     def moveConflicts(self, p):
+        """Return whether a move conflicts with (overlaps or is edge adjacent to) pieces on board."""
 
         color = self.turn
         
@@ -310,14 +305,14 @@ class Gamestate:
 
         return False
         
-    # Update turn to next player
     def advanceTurn(self):
+        """Advance turn value to next player."""
         self.turn = self.turn + 1
         if self.turn == 5:
             self.turn = 1
 
-    # Returns the hand corresponding to int color    
     def getHand(self, color):
+        """Return the hand corresponding to provided color."""
         if color == 1:
             return self.blue
         if color == 2:
@@ -327,8 +322,8 @@ class Gamestate:
         if color == 4:
             return self.green
 
-    # Returns a hand as a list sorted by piece size
     def sortedHand(self, color):
+        """Return the hand corresponding to provided color as a list sorted by piece size."""
         rtn = list()
         hand = self.getHand(color)
         sortednames = ["F","I","L","N","P","T","U","V","W","X","Y","Z",
@@ -341,8 +336,8 @@ class Gamestate:
                 rtn.append(Gamestate.referenceHand[name])
         return rtn
 
-    # Returns the corner list corresponding to int color
     def getCorners(self, color):
+        """Return the corner list corresponding to provided color."""
         if color == 1:
             return self.bcorners
         if color == 2:
@@ -352,8 +347,8 @@ class Gamestate:
         if color == 4:
             return self.gcorners
 
-    # Given a 2x2n matrix of corners, update appropriate color's corner list
     def updateCorners(self, color, corners):
+        """Update color's corner list with provided 2x2n corner matrix."""
         oldList = self.getCorners(color)
         for cur in Pieces.splitCornerArray(corners):
             inv = np.array([[cur[0,1],cur[0,0]],[cur[1,1],cur[1,0]]])
@@ -368,15 +363,14 @@ class Gamestate:
             if not obliterated:
                 oldList.append(cur.copy())
 
-    # Sets the lastPlayed variable for color to name 
     def setLastPlayed(self, name, color):
+        """Set lastPlayed entry corresponding to color to provided piece name."""
         for i in range(1,5):
             if color == i:
                 self.lastPlayed[i-1] = name
         
-
-    # Given a 2xn matrix of coordinates, set those to int color
     def colorSet(self, coords, color):
+        """Change coordinates in 2xn coordinate matrix to provided color."""
         if not (color in range(1,5)):
             return False
         for i in range(coords[0].size):
@@ -385,8 +379,8 @@ class Gamestate:
             self.board[coords[1,i]][coords[0,i]] = color
         return True
 
-    # Returns list of possible moves for current player
     def listMoves(self):
+        """Get list of possible moves for current player."""
         rtn = list()
 
         hand = self.getHand(self.turn)
@@ -426,9 +420,9 @@ class Gamestate:
         rtn.append('pass!')
         return rtn
 
-    # Find all moves for a given piece in a specific orientation
     def findPieceMoves(self, p):
-
+        """Return list of possible moves for piece p in current orientation."""
+        
         rtn = list()
         bcorners = self.getCorners(self.turn)
         piece_extremes = Pieces.findExtremes(p.shape)
@@ -460,9 +454,8 @@ class Gamestate:
 
         return rtn
 
-
-    # Like listMoves, but returns as soon as it finds a single move
     def canMove(self):
+        """Return the first legal move found."""
         hand = self.getHand(self.turn)
         corners = self.getCorners(self.turn)
 
@@ -508,9 +501,8 @@ class Gamestate:
                         return canFindPieceMoves
         return False
 
-    # canMove's equivalent of findPieceMoves (returns as soon as it
-    # finds a single move)
     def canFindPieceMoves(self, p):
+        """Return first legal move found for piece p in current orientation."""
 
         bcorners = self.getCorners(self.turn)
         piece_extremes = Pieces.findExtremes(p.shape)
@@ -542,15 +534,14 @@ class Gamestate:
 
         return False
 
-    # Returns true if gamestate is terminal (four consecutive passes), otherwise
-    # returns false
     def isTerminal(self):
+        """Return true if gamestate is terminal (four consecutive passes), false otherwise."""
         if self.passCount >= 4:
             return True
         return False
 
-    # Returns list of scores
     def getScores(self):
+        """Return list of scores."""
         scores = [0,0,0,0]
         for i in range(1,5):
             hand = self.getHand(i)
@@ -561,8 +552,8 @@ class Gamestate:
                 scores[i-1] = scores[i-1] - 5
         return scores
         
-    # Print current scores
     def printScores(self):
+        """Print current scores."""
 
         scores = self.getScores()
         print("Final scores:")
@@ -575,20 +566,20 @@ class Gamestate:
         print("Green:")
         print scores[3]
     
-    # Print board
     def printBoard(self):
+        """Print current board."""
         print self.board
         
-    # Print a player's hand
     def printHand(self, i):
+        """Print a player's hand."""
         hand = self.getHand(i)
         for name, val in hand.items():
             if val:
                 sys.stdout.write(name + ' ')
         sys.stdout.write("\n")
 
-    # Print a player's hand sorted by piece size
     def printSortedHand(self, i):
+        """Print a player's hand sorted by piece size."""
         sortedhand = self.sortedHand(i)
         for p in sortedhand:
             sys.stdout.write(p.name + ' ')

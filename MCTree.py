@@ -7,8 +7,8 @@ import sys
 import random
 import pdb
 
-# Picks a random move from a list, but weights choice by size of each piece
 def weightedRandomMove(moves):
+    """Return a random move from moves, weighted by piece size."""
     weightedlist = list()
     for move in moves:
         if move != 'pass!':
@@ -30,8 +30,8 @@ class MCNode():
         self.playouts = playouts
         self.wins = [0,0,0,0]
         
-    # Prints the tree rooted at this node
     def printTree(self):
+        """Print the tree written on this node."""
         print("root")
         sys.stdout.write("Wins: ")
         sys.stdout.write(str(self.wins))
@@ -39,8 +39,8 @@ class MCNode():
         print(str(self.playouts))
         self.printTreeRec(1)
         
-    # Recursive helper method for printTree
     def printTreeRec(self, indent):
+        """Recursive helper function for printTree."""
         for move, child in self.children.items():
             for i in range(0, indent):
                 sys.stdout.write("\t")
@@ -51,20 +51,15 @@ class MCNode():
             print(str(child.playouts))
             child.printTreeRec(indent + 1)
 
-    # Given a utility vector for a terminal gamestate descended from this node,
-    # update wins and playouts accordingly
     def updateStats(self, utility_vector):
-        
+        """Update node's wins and playouts based on a descendant's utility vector."""
         self.playouts = self.playouts + 1
         for i in range(0,4):
             if utility_vector[i] == 1:
                 self.wins[i] = self.wins[i] + 1
-        
-    # Expands a random unvisited child from node, plays out simulation from it,
-    # updates fullyExpanded to true if all children have been explored, and returns
-    # results of simulation
-    def expand(self):
 
+    def expand(self):
+        """Expand a random unvisited child from node, play out simulation, update stats, and return utility vector result."""
         if self.gamestate.isTerminal():
             utilityVector = utility(self.gamestate)
             self.updateStats(utilityVector)
@@ -89,7 +84,7 @@ class MCNode():
         new_node = self.children[randMove]
         
         # Run simulation from new node
-        sim_result = new_node.simulateGameWithFirstMoves()
+        sim_result = new_node.simulateWeightedGame()
         
         # Update own stats with this result
         self.updateStats(sim_result)
@@ -101,9 +96,8 @@ class MCNode():
         # Return result of simulation (utility vector) for backpropagation
         return sim_result
 
-    # Simulates a random game starting from self's gamestate, and returns
-    # the outcome as a vector of utility
     def simulateGame(self):
+        """Simulate a random game starting from this node, and return utility vector outcome."""
 
         print("Simulating random game..")
 
@@ -121,8 +115,26 @@ class MCNode():
         # Return utility vector for backpropagation
         return utility_vector
 
+    def simulateWeightedGame(self):
+        """Simulate a game with random moves weighted by piece size, and return utility vector outcome."""
+        print("Simulating weighted random game..")
+
+        # Simulate game 
+        gamestate = self.gamestate.duplicate()
+        while not gamestate.isTerminal():
+            moves = gamestate.listMoves()
+            randMove = weightedRandomMove(moves)
+            gamestate.update(randMove)
+            
+        # Update playout and win count in self
+        utility_vector = utility(gamestate)
+        self.updateStats(utility_vector)
+
+        # Return utility vector for backpropagation
+        return utility_vector
+
     def simulateGameWithFirstMoves(self):
-        
+        """Simulate a game where players pick first moves, and return utility vector outcome."""
         print("Simulating game with first moves...")
 
         # Simulate game

@@ -11,6 +11,7 @@ import cPickle as pickle
     
 class monteCarloPlayer(Players.AIPlayer):
     def getMove(self, update):
+        """Prompted with gamestate, return move chosen by monte carlo search tree."""
         
         # If this is the first time getMove is called,
         # initialize 'root' and 'current' to node w/ opening gamestate
@@ -73,9 +74,8 @@ class monteCarloPlayer(Players.AIPlayer):
         print(self.current.gamestate.board)
         return(move)
         
-    # Given a gamestate and a following gamestate, find what move (if any)
-    # was made by player color
     def findMoveMade(self, prev, update, color):
+        """Return what move (if any) was made by provided player between prev and update.""" 
 
         # Determine which piece was played by comparing hands
         piecePlayed = None
@@ -110,9 +110,8 @@ class monteCarloPlayer(Players.AIPlayer):
 
         return (piece, orientation, minx, miny)
 
-            
-    # A single runthrough/expansion/playout of the Monte Carlo search tree
     def mcIteration(self):
+        """Iterate Monte Carlo search tree algorithm by doing a single step-through/expansion/playout/update."""
 
         # Step through the tree according to upper confidence bounds until we
         # reach a node whose children have not all been explored
@@ -132,9 +131,8 @@ class monteCarloPlayer(Players.AIPlayer):
             node.updateStats(result)
             node = node.parent
 
-    # Given an MCNode, returns the move corresponding to its child with the highest
-    # average playout
     def highestAvgPlayoutMove(self, node):
+        """Return the move corresponding to the child of the given node with highest average playout."""
         color = node.gamestate.turn
         highestAvg = -1
         highestAvgMove = None
@@ -145,9 +143,8 @@ class monteCarloPlayer(Players.AIPlayer):
                 highestAvgMove = move
         return highestAvgMove
             
-    # Given an MCNode, returns the move corresponding to its child with the highest
-    # upper confidence bound (for the player at that node)
     def highestUCBMove(self, node):
+        """Return the move corresponding to the child of the given node with the highest UCB."""
         color = node.gamestate.turn
         highestUCB = -1
         highestUCBMove = None
@@ -167,25 +164,24 @@ class monteCarloPlayer(Players.AIPlayer):
                 highestUCBMove = move
         return highestUCBMove
             
-    # Given an MCNode, returns the move corresponding to the child with the highest
-    # upper confidence bound (for the player at that node)
-    # if all children have been explored, or false otherwise
     def ucbStep(self, node):
+        """If node is fully expanded, return move corresponding to child with highest UCB, else return false."""
         if node.fullyExpanded:
             return self.highestUCBMove(node)
         else:
             return False
 
-class persistentMonteCarloPlayer(monteCarloPlayer):
+class persistentMCPlayer(monteCarloPlayer):
 
     shouldReadTree = True
     
     def getMove(self, update):
+        """Prompted with gamestate, return move chosen by MCTS with tree loaded from file."""
 
         # If this is the first time getMove is called, either read root from file
         # or initialize new one. Then set 'current' to last known gamestate
         if not hasattr(self, 'root'):
-            if persistentMonteCarloPlayer.shouldReadTree:
+            if persistentMCPlayer.shouldReadTree:
                 self.root = self.readTree()
             else:
                 self.root = MCTree.MCNode(Gamestate.Gamestate())
@@ -245,35 +241,14 @@ class persistentMonteCarloPlayer(monteCarloPlayer):
         print("self.current.gamestate.board:")
         print(self.current.gamestate.board)
         return(move)
-            
-
-    # A single runthrough/expansion/playout of the Monte Carlo search tree
-    # NOTE: Backs up to root, not current
-    def mcIteration(self):
-
-        # Step through the tree according to upper confidence bounds until we
-        # reach a node whose children have not all been explored
-        node = self.current
-        canStep = self.ucbStep(node)
-        while not canStep == False:
-            node = node.children[canStep]
-            canStep = self.ucbStep(node)
-
-        # Then expand that node, saving the result (utility vector) of
-        # random playout
-        result = node.expand()
-
-        # Backpropagate that result through node's parents
-        node = node.parent
-        while not node is None and not node is self.root:
-            node.updateStats(result)
-            node = node.parent
 
     def writeTree(self):
+        """Write MC tree to file."""
         file = open("treestorage","wb")
         pickle.dump(self.root, file, -1)
         file.close()
 
     def readTree(self):
+        """Read MC tree from file."""
         file = open("treestorage","r")
         return pickle.load(file)

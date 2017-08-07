@@ -5,8 +5,8 @@ import Pieces
 import Gamestate
 import Players
 
-# Maxn search wrapper which returns the move leading to the best outcome
 def maxn_getMove(gamestate, max_score):
+    """Wrapper for maxn search - return result of search."""
     color = gamestate.turn
     moves = gamestate.listMoves()
     children = Players.expandFromList(gamestate, moves)
@@ -24,9 +24,9 @@ def maxn_getMove(gamestate, max_score):
     else:
         return list()
 
-# Maxn search
-# * added immediate pruning
+# NOTE: added immediate pruning
 def maxn(gamestate, max_score):
+    """Return result of maxn search for best outcome."""
     
     # If gamestate is terminal, return vector of utility
     if gamestate.isTerminal():
@@ -55,11 +55,12 @@ def maxn(gamestate, max_score):
             return maxn(new_gamestate, max_score)
     
 class impracticallyThoroughAIPlayer(Players.AIPlayer):
+    """AI player which attempts a complete maxn search."""
     def getMove(self, update):
         return maxn_getMove(update, 1)
 
-# X-ply maxn search wrapper that returns the move chosen by x-ply maxn search
 def xPlyMaxn_getMove(gamestate, maxdepth, max_score):
+    """Wrapper for x-ply maxn search - return result of search."""
     color = gamestate.turn
     moves = gamestate.listMoves()
     children = Players.expandFromList(gamestate, moves)
@@ -78,9 +79,8 @@ def xPlyMaxn_getMove(gamestate, maxdepth, max_score):
     else:
         return list()
 
-    
-# Maxn search that expands tree to maximum depth of x and then evaluates leaves by current score
 def xPlyMaxn(gamestate, depth, maxdepth, max_score):
+    """Return result of x-ply maxn search for best outcome."""
     print("xPlyMaxn previewing:")
     print(gamestate.board)
     if depth == maxdepth or gamestate.isTerminal():
@@ -107,6 +107,7 @@ def xPlyMaxn(gamestate, depth, maxdepth, max_score):
     
     
 class xPlyAIPlayer(Players.AIPlayer):
+    """AI player who uses x-ply maxn search to find moves."""
     def getMove(self, update):
         return xPlyMaxn_getMove(update, 5, 1)
         

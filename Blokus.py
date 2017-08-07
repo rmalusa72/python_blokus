@@ -42,7 +42,7 @@ for i in range(1,5):
     if n == 4:
         players[i] = MaxnPlayers.xPlyAIPlayer(i)
     if n == 5:
-        players[i] = MCTSPlayers.persistentMonteCarloPlayer(i)
+        players[i] = MCTSPlayers.persistentMCPlayer(i)
 
 # MAIN GAME LOOP
 # Quit when curr is terminal (aka four consecutive passes have occurred)
@@ -68,5 +68,5 @@ curr.printScores()
 
 # Temporarily here - write monte carlo search tree from persistent player at game end
 for i in range(1,5):
-    if isinstance(players[i], MCTSPlayers.persistentMonteCarloPlayer):
+    if isinstance(players[i], MCTSPlayers.persistentMCPlayer):
         players[i].writeTree()

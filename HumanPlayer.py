@@ -7,13 +7,14 @@ import Pieces
 import numpy as np
 
 class HumanPlayer(Players.Player):
+    """Human player class."""
 
     def __init__(self, color):
         self.color = color
         self.referenceHand = Gamestate.initRefHand()
 
-    # When provided an updated gamestate, prompt player for their move
     def getMove(self, update):
+        """When provided an updated gamestate, prompt player for their move."""
 
         # Print information to player
         print("Player" + str(self.color) + ", your hand contains:")
