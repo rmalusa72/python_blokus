@@ -67,12 +67,12 @@ def startCorner(color):
     if color == 1:
         corners.append(np.array([[-1,0],[-1,0]]))
     if color == 2:
-        corners.append(np.array([[-1,0],[Gamestate.boardsize, Gamestate.boardsize-1]]))
+         corners.append(np.array([[Gamestate.boardsize, Gamestate.boardsize-1],[-1,0]]))
     if color == 3:
         corners.append(np.array([[Gamestate.boardsize, Gamestate.boardsize-1],
                                  [Gamestate.boardsize, Gamestate.boardsize-1]]))
     if color == 4:
-        corners.append(np.array([[Gamestate.boardsize, Gamestate.boardsize-1],[-1,0]]))
+       corners.append(np.array([[-1,0],[Gamestate.boardsize, Gamestate.boardsize-1]]))
     return corners
 
 def initBoard():
