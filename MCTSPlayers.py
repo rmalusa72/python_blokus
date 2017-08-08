@@ -138,7 +138,10 @@ class monteCarloPlayer(Players.AIPlayer):
         highestAvg = -1
         highestAvgMove = None
         for move, child in node.children.items():
-            currNodeAvg = child.wins[color-1]/(child.playouts*1.0)
+            if child.playouts != 0:
+                currNodeAvg = child.wins[color-1]/(child.playouts*1.0)
+            else:
+                currNodeAvg = 0
             if currNodeAvg > highestAvg:
                 highestAvg = currNodeAvg
                 highestAvgMove = move
@@ -150,16 +153,18 @@ class monteCarloPlayer(Players.AIPlayer):
         highestUCB = -1
         highestUCBMove = None
         for move, child in node.children.items():
-            
-            # The upper confidence bound of a node is
-            # xi + sqrt(2*ln(n)/ni)
-            # where n is total playouts from current gamestate,
-            # ni = total playouts from node i,
-            # wi = total wins from node i for player color, 
-            # and xi = average payout for node i (wi/ni)
-            currNodeUCB = (child.wins[color-1]/(child.playouts*1.0)
-                           + np.sqrt(2 * np.log(self.current.playouts)
-                                     / (child.playouts * 1.0)))
+            if child.playouts != 0:
+                # The upper confidence bound of a node is
+                # xi + sqrt(2*ln(n)/ni)
+                # where n is total playouts from current gamestate,
+                # ni = total playouts from node i,
+                # wi = total wins from node i for player color, 
+                # and xi = average payout for node i (wi/ni)
+                currNodeUCB = (child.wins[color-1]/(child.playouts*1.0)
+                               + np.sqrt(2 * np.log(self.current.playouts)
+                                         / (child.playouts * 1.0)))
+            else:
+                currNodeUCB = 0
             if currNodeUCB > highestUCB:
                 highestUCB = currNodeUCB
                 highestUCBMove = move

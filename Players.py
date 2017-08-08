@@ -7,34 +7,6 @@ import random
 import Gamestate
 import Pieces
 
-class Player:
-    """Abstract player class."""
-    def __init__(self, color):
-        self.color = color
-
-    def getMove(self, update):
-        """When provided a gamestate update, return move"""
-        return list()
-
-    def close(self):
-        """Perform closing tasks for this AI."""
-        pass
-        
-class AIPlayer(Player):
-    """Abstract AI player class."""
-    def getMove(self, update):
-        #IMPLEMENT THIS
-        return list()
-
-class veryStupidAIPlayer(AIPlayer):
-    """AI player who makes first move it sees."""
-    def getMove(self, update):
-        move = update.canMove()
-        if move != False:
-            return move
-        else:
-            return 'pass!'
-
 def utility(gamestate):
     """Returns a utility vector for a gamestate where 0 is tie, -1 is loss, 1 is win."""
     utilityVector = [-1,-1,-1,-1]
@@ -93,3 +65,38 @@ def weightedRandomMove(moves):
             weightedlist.append('pass!')
                 
     return random.choice(weightedlist)
+
+class Player:
+    """Abstract player class."""
+    def __init__(self, color):
+        self.color = color
+
+    def getMove(self, update):
+        """When provided a gamestate update, return move"""
+        return list()
+
+    def close(self):
+        """Perform closing tasks for this AI."""
+        pass
+        
+class AIPlayer(Player):
+    """Abstract AI player class."""
+    def getMove(self, update):
+        #IMPLEMENT THIS
+        return list()
+
+class veryStupidAIPlayer(AIPlayer):
+    """AI player who makes first move it sees."""
+    def getMove(self, update):
+        move = update.canMove()
+        if move != False:
+            return move
+        else:
+            return 'pass!'
+
+class weightedRandomPlayer(AIPlayer):
+    """AI player which makes a random move weighted by piece size"""
+    def getMove(self, update):
+        moves = update.listMoves()
+        move = weightedRandomMove(moves)
+        return move

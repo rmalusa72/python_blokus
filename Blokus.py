@@ -24,7 +24,7 @@ for i in range(1,5):
     while not success:
         try:
             n = int(raw_input())
-            if n!=0 and n!= 1 and n!=2 and n!= 3 and n!= 4 and n!=5:
+            if n!=0 and n!= 1 and n!=2 and n!= 3 and n!= 4 and n!=5 and n!=6:
                 print("Please enter zero or one only")
             else:
                 success = True
@@ -43,6 +43,8 @@ for i in range(1,5):
         players[i] = MaxnPlayers.xPlyAIPlayer(i)
     if n == 5:
         players[i] = MCTSPlayers.persistentMCPlayer(i)
+    if n == 6:
+        players[i] = Players.weightedRandomPlayer(i)
 
 # MAIN GAME LOOP
 # Quit when curr is terminal (aka four consecutive passes have occurred)
